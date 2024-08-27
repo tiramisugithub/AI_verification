@@ -12,12 +12,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@RequiredArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 @Table(name="p_stores")
@@ -55,4 +55,17 @@ public class Store extends Timestamped {
   // Cascade.PERSIST : 영속성 전이 : 영속 상태의 작업들이 연관된 엔티티들까지 전파
   @OneToMany(mappedBy = "store", cascade = CascadeType.PERSIST)
   private List<Menu> menuList = new ArrayList<>();
+
+  @Builder
+  public Store(String userId, String regionId, String categoryId, String name, String address, String phone, String description, Boolean status) {
+    this.userId = userId;
+    this.regionId = regionId;
+    this.categoryId = categoryId;
+    this.name = name;
+    this.address = address;
+    this.phone = phone;
+    this.description = description;
+    this.status = status;
+
+  }
 }
