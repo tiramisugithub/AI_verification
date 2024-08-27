@@ -10,12 +10,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@RequiredArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 @Table(name="p_menus")
@@ -43,4 +43,15 @@ public class Menu extends Timestamped {
   @ManyToOne
   @JoinColumn(name = "store_id")
   private Store store;
+
+  @Builder
+  public Menu(String id, String storeId, String name, int price, String description, Boolean status, Store store) {
+    this.id = id;
+    this.storeId = storeId;
+    this.name = name;
+    this.price = price;
+    this.description = description;
+    this.status = status;
+    this.store = store;
+  }
 }
