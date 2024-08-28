@@ -1,17 +1,23 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/ai_verification_test
-    username: test
-    password: test
+    url: jdbc:postgresql://localhost:5432/ai_verification
     driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+    hikari:
+      maximum-pool-size: 4
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: default
+      password: systempass
+
   jpa:
+    database: postgresql
     hibernate:
       ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
 jwt:
-  secret-key: 9yDePwnv4ck5lvqtSH9U0FdyihJqtgl0Ov2eIXC8JPGdlx89NQhwG27DjZmutWcLXMgb1aJkQCA5PfWxOyxxkA==
+  secret-key: "Secret Key"
   expiration: 3600 # JWT 토큰 만료 시간 (초 단위)
+
