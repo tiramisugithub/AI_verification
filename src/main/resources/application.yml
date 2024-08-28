@@ -17,3 +17,7 @@ spring:
     database: postgresql
     hibernate:
       ddl-auto: update
+jwt:
+  secret-key: "Secret Key"
+  expiration: 3600 # JWT 토큰 만료 시간 (초 단위)
+
