@@ -9,6 +9,7 @@ import com.sparta.aiverification.user.enums.UserRoleEnum;
 import com.sparta.aiverification.user.jwt.JwtUtil;
 import com.sparta.aiverification.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +17,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // 권한 토큰
-    //TODO : TOKEN 명 수정
-    private final String MANAGER_TOKEN = "MANAGER_SECRET_TOKEN";
-    private final String MASTER_TOKEN = "MASTER_SECRET_TOKEN";
     private final JwtUtil jwtUtil;
 
     public void signup(SignupRequestDto requestDto) {
@@ -47,20 +45,9 @@ public class UserService {
             throw new IllegalArgumentException("중복된 Email 입니다.");
         }
 
-        // MASTER 권한 확인
-        if (UserRoleEnum.MASTER.equals(role)) {
-            if (!MASTER_TOKEN.equals(requestDto.getMasterToken())) {
-                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
-            }
-            role = UserRoleEnum.MASTER;
-        }
-
-        // MANAGER 권한 확인
-        if (UserRoleEnum.MANAGER.equals(role)) {
-            if (!MANAGER_TOKEN.equals(requestDto.getManagerToken())) {
-                throw new IllegalArgumentException("매니저 암호가 틀려 등록이 불가능합니다.");
-            }
-            role = UserRoleEnum.MANAGER;
+        //권한 확인
+        if(UserRoleEnum.MASTER.equals(role) || UserRoleEnum.MANAGER.equals(role)){
+            throw new IllegalArgumentException("관리자 및 매니저는 등록이 불가능합니다.");
         }
 
         // 사용자 등록
@@ -107,7 +94,7 @@ public class UserService {
             User user = userRepository.findByUsername(username).orElse(null);
 
             if (user != null) {
-                boolean isAdmin = user.getRole().equals(UserRoleEnum.MASTER);
+                boolean isAdmin = user.getRole().equals(UserRoleEnum.MASTER) || user.getRole().equals(UserRoleEnum.MANAGER);
                 return new UserInfoDto(user.getUsername(), isAdmin);
             }
         }
