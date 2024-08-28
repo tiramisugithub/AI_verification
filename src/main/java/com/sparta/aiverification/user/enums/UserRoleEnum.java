@@ -1,5 +1,8 @@
 package com.sparta.aiverification.user.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum UserRoleEnum {
     CUSTOMER(Authority.CUSTOMER),  // 고객 권한
     OWNER(Authority.OWNER),        // 가게주인 권한
