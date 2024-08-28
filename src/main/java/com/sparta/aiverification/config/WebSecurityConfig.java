@@ -23,9 +23,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-
+    // JWT 유틸리티 클래스
     private final JwtUtil jwtUtil;
+    // 사용자 세부 정보 서비스 구현체
     private final UserDetailsServiceImpl userDetailsService;
+    // 인증 설정을 위한 구성 클래스
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean

@@ -52,7 +52,7 @@ public class JwtUtil {
                         .compact();
     }
 
-    // header 에서 JWT 가져오기(Cookie X)
+    // header 에서 JWT 가져오기
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         log.info("Received Authorization header: {}", bearerToken);

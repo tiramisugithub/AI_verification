@@ -33,7 +33,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         //순수 토큰 가져오기
         String tokenValue = jwtUtil.getJwtFromHeader(req);
-        log.info("순수 토큰 :{}", tokenValue);
+        //log.info("순수 토큰 :{}", tokenValue);
 
 
         if (StringUtils.hasText(tokenValue)) {
@@ -67,7 +67,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     // 인증 객체 생성
     private Authentication createAuthentication(String username) {
-        log.info("인증 객체 생성 {}",username);
+        log.info("인증 객체 생성 : {}",username);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
