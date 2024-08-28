@@ -30,9 +30,4 @@ public class SignupRequestDto {
 
     // 사용자 권한
     private UserRoleEnum role ;
-
-    //private boolean admin = false;
-
-    private String masterToken = "";
-    private String managerToken = "";
 }
