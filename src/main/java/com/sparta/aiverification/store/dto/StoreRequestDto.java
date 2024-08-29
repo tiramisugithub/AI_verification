@@ -1,7 +1,5 @@
 package com.sparta.aiverification.store.dto;
 
-import com.sparta.aiverification.category.entity.Category;
-import com.sparta.aiverification.region.entity.Region;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StoreRequestDto {
-  private Category category;
-  private Region region;
+  private Long categoryId;
+  private Long regionId;
   private String name;
   private String phone;
   private String address;
