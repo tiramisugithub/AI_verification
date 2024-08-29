@@ -35,6 +35,7 @@ public class Region extends Timestamped {
   @Column(nullable = false)
   private String name;
 
+  @Builder.Default
   @OneToMany(mappedBy = "region", cascade = CascadeType.PERSIST)
   private List<Store> storeList = new ArrayList<>();
 
