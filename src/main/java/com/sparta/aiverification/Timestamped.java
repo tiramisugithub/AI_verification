@@ -27,12 +27,12 @@ public abstract class Timestamped {
   private Long createdBy;
 
   @LastModifiedDate
-  @Column(updatable = false)
+  @Column
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime updatedAt;
 
   @LastModifiedBy
-  @Column(updatable = false)
+  @Column()
   private Long updatedBy;
 
 
@@ -40,11 +40,12 @@ public abstract class Timestamped {
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime deletedAt;
 
+  @Column(updatable = false)
   private Long deletedBy;
 
   // 소프트 삭제 메서드
-  public void delete(Long deletedBy) {
+  public void delete(Long deletedByUserId) {
     this.deletedAt = LocalDateTime.now();
-    this.deletedBy = deletedBy;
+    this.deletedBy = deletedByUserId;
   }
 }

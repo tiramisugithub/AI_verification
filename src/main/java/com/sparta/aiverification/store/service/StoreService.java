@@ -24,7 +24,7 @@ public class StoreService {
   @Transactional
   public StoreResponseDto createStore(StoreRequestDto storeRequestDto) {
     Store store = Store.builder()
-        .userId(UUID.randomUUID())
+        .userId(Long.valueOf(1))
         .regionId(storeRequestDto.getRegionId())
         .categoryId(storeRequestDto.getCategoryId())
         .address(storeRequestDto.getAddress())
@@ -72,7 +72,7 @@ public class StoreService {
   public void deleteStoreAndMenus(UUID storeId) {
     Store store = storeRepository.findById(storeId)
         .orElseThrow(() -> new RuntimeException("Store not found"));
-     store.delete("current_user");
+     // store.delete("current_user");
      store.setStatusFalse();;
 
   }
