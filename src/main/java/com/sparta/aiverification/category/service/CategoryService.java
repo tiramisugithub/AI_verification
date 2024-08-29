@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CategoryService {
 
-  private static void validate(User user) {
+  private static void userValidate(User user) {
     // validation
     if (user.getRole() != UserRoleEnum.MASTER && user.getRole() != UserRoleEnum.MANAGER) {
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
@@ -31,7 +31,7 @@ public class CategoryService {
   @Transactional
   public CategoryResponseDto createCategory(User user, CategoryRequestDto categoryRequestDto) {
     // validation
-    validate(user);
+    userValidate(user);
 
     Category category = Category.builder().name(categoryRequestDto.getCategoryName()).build();
     categoryRepository.save(category);
@@ -55,7 +55,7 @@ public class CategoryService {
   @Transactional
   public CategoryResponseDto updateCategory(Long categoryId, User user, CategoryRequestDto categoryRequestDto) {
     // validation
-    validate(user);
+    userValidate(user);
 
     Category category = categoryRepository.findById(categoryId).orElseThrow(NoSuchElementException::new);
     category.update(categoryRequestDto.getCategoryName());
@@ -65,7 +65,7 @@ public class CategoryService {
   @Transactional
   public void deleteCategory(Long categoryId, User user) {
     // validation
-    validate(user);
+    userValidate(user);
 
     Category category = categoryRepository.findById(categoryId).orElseThrow(NoSuchElementException::new);
     categoryRepository.deleteById(categoryId);
