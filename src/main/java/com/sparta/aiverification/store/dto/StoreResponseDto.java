@@ -24,8 +24,8 @@ public class StoreResponseDto {
 
   public StoreResponseDto(Store store) {
     this.storeId = store.getId();
-    this.categoryId = store.getCategoryId();
-    this.regionId = store.getRegionId();
+    this.categoryId = store.getCategory().getId();
+    this.regionId = store.getRegion().getId();
     this.name = store.getName();
     this.phone = store.getPhone();
     this.address = store.getAddress();
