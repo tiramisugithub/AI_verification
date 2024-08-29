@@ -1,5 +1,6 @@
 package com.sparta.aiverification.order.service;
 
+import com.sparta.aiverification.common.ErrorCode;
 import com.sparta.aiverification.common.RestApiException;
 import com.sparta.aiverification.order.dto.OrderErrorCode;
 import com.sparta.aiverification.order.dto.OrderRequestDto;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -47,15 +49,25 @@ public class OrderService {
         Integer totalPrice = 0;
         for(OrderMenuRequestDto.CreateRequestDto createRequestDto : requestDto.getMenuList()){
             Menu menu = menuService.findById(createRequestDto.getMenuId());
-            totalPrice += menu.getPrice();
+            totalPrice += menu.getPrice() * createRequestDto.getQuantity();
             order.addOrderMenu(OrderMenu.builder()
                     .order(order)
                     .menu(menu)
                     .quantity(createRequestDto.getQuantity())
                     .build());
         }
+
         order.updateTotalPrice(totalPrice);
         return OrderResponseDto.CreateResponseDto.of(orderRepository.save(order));
+    }
+
+
+    public OrderResponseDto.GetResponseDto getOrder(User user, UUID orderId) {
+        Order order = findById(orderId);
+        if(!order.getUser().getId().equals(user.getId())){
+            throw new RestApiException(OrderErrorCode.BAD_REQUEST_ORDER);
+        }
+        return OrderResponseDto.GetResponseDto.of(order);
     }
 
     private Order createEmptyOrder(User user, Store store, String detail) {
@@ -66,5 +78,9 @@ public class OrderService {
                 .orderMenuList(orderMenuList)
                 .detail(detail)
                 .build();
+    }
+
+    private Order findById(UUID orderId){
+        return orderRepository.findById(orderId).orElseThrow(() -> new RestApiException(OrderErrorCode.NOT_FOUND_ORDER));
     }
 }

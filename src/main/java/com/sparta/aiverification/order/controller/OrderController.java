@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @Slf4j
 @RequestMapping("/orders")
@@ -23,5 +25,12 @@ public class OrderController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody OrderRequestDto.CreateRequestDto requestDto) {
         return RestApiResponse.success(orderService.createOrder(userDetails.getUser(), requestDto));
+    }
+
+    @GetMapping("/{orderId}")
+    public RestApiResponse<OrderResponseDto.GetResponseDto> getOrder(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID orderId) {
+        return RestApiResponse.success(orderService.getOrder(userDetails.getUser(), orderId));
     }
 }
