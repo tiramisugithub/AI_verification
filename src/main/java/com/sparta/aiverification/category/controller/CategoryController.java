@@ -40,19 +40,19 @@ public class CategoryController {
 
   // 3. 카테고리 정보 조회
   @GetMapping("/{categoryId}")
-  public CategoryResponseDto getCategory(@PathVariable Long categoryId) {
+  public CategoryResponseDto getCategory(@PathVariable("categoryId") Long categoryId) {
     return categoryService.getCategory(categoryId);
   }
 
   // 4. 카테고리 수정
   @PutMapping("/{categoryId}")
-  public CategoryResponseDto updateCategory(@PathVariable Long categoryId, @RequestBody String categoryName) {
-    return categoryService.updateCategory(categoryId, categoryName);
+  public CategoryResponseDto updateCategory(@PathVariable("categoryId") Long categoryId, @RequestBody CategoryRequestDto categoryRequestDto) {
+    return categoryService.updateCategory(categoryId, categoryRequestDto);
   }
 
   // 5. 카테고리 삭제
   @DeleteMapping("/{categoryId}")
-  public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId) {
+  public ResponseEntity<String> deleteCategory(@PathVariable("categoryId") Long categoryId) {
     categoryService.deleteCategory(categoryId);
     return ResponseEntity.ok("카테고리가 삭제되었습니다");
   }
