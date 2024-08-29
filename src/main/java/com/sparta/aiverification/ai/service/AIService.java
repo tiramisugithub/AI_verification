@@ -4,6 +4,8 @@ import com.sparta.aiverification.ai.dto.AIRequestDto;
 import com.sparta.aiverification.ai.dto.AIResponseDto;
 import com.sparta.aiverification.ai.entity.AI;
 import com.sparta.aiverification.ai.repository.AIRepository;
+import com.sparta.aiverification.menu.entity.Menu;
+import com.sparta.aiverification.menu.repository.MenuRepository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +19,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class AIService {
   private final AIRepository aiRepository;
+  private final MenuRepository menuRepository;
 
   @Transactional
   public AIResponseDto createAI(AIRequestDto aiRequestDto) {
+    Menu menu = menuRepository.findById(aiRequestDto.getMenuId())
+        .orElseThrow(() -> new NoSuchElementException("Menu with ID " + aiRequestDto.getMenuId() + " not found"));
+
     AI ai = AI.builder()
+        .menu(menu)
         .request(aiRequestDto.getRequest())
         .response("").build();
+
     aiRepository.save(ai);
     return new AIResponseDto(ai);
   }
