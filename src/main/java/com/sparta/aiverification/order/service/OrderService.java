@@ -8,6 +8,7 @@ import com.sparta.aiverification.order.dto.OrderResponseDto;
 import com.sparta.aiverification.order.entity.Order;
 import com.sparta.aiverification.order.repository.OrderRepository;
 import com.sparta.aiverification.ordermenu.dto.OrderMenuRequestDto;
+import com.sparta.aiverification.ordermenu.dto.OrderMenuResponseDto;
 import com.sparta.aiverification.ordermenu.entity.OrderMenu;
 import com.sparta.aiverification.tmp.entity.Menu;
 import com.sparta.aiverification.tmp.entity.Store;
@@ -70,6 +71,38 @@ public class OrderService {
         return OrderResponseDto.GetResponseDto.of(order);
     }
 
+
+    public List<OrderResponseDto.GetResponseDto> getOrders(User user) {
+        if(user.getRole() == UserRoleEnum.CUSTOMER || user.getRole() == UserRoleEnum.OWNER)
+            throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
+        return orderRepository.findAll()
+                .stream()
+                .map(OrderResponseDto.GetResponseDto::of)
+                .toList();
+    }
+
+
+    public List<OrderResponseDto.GetResponseDto> getOrdersByUser(User user) {
+        if(user.getRole() == UserRoleEnum.OWNER)
+            throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
+        return orderRepository.findAllByUserId(user.getId())
+                .stream()
+                .map(OrderResponseDto.GetResponseDto::of)
+                .toList();
+    }
+
+
+    public List<OrderResponseDto.GetResponseDto> getOrdersByStore(User user, UUID storeId) {
+        if(user.getRole() == UserRoleEnum.CUSTOMER)
+            throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
+        // User가 가지고 있는 Store인지 확인하는 로직 필요
+        return orderRepository.findAllByStoreId(storeId)
+                .stream()
+                .map(OrderResponseDto.GetResponseDto::of)
+                .toList();
+    }
+
+
     private Order createEmptyOrder(User user, Store store, String detail) {
         List<OrderMenu> orderMenuList = new ArrayList<>();
         return Order.builder()
@@ -83,4 +116,5 @@ public class OrderService {
     private Order findById(UUID orderId){
         return orderRepository.findById(orderId).orElseThrow(() -> new RestApiException(OrderErrorCode.NOT_FOUND_ORDER));
     }
+
 }
