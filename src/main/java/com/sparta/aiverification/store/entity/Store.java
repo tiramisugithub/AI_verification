@@ -2,6 +2,8 @@ package com.sparta.aiverification.store.entity;
 
 import com.sparta.aiverification.Timestamped;
 import com.sparta.aiverification.menu.entity.Menu;
+import com.sparta.aiverification.category.entity.Category;
+import com.sparta.aiverification.region.entity.Region;
 import com.sparta.aiverification.store.dto.StoreRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -9,6 +11,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
@@ -35,11 +39,13 @@ public class Store extends Timestamped {
   @Column(name="user_id", nullable = false, updatable = false)
   private Long userId;
 
-  @Column(name="region_id", nullable = false)
-  private Long regionId;
+  @ManyToOne
+  @JoinColumn(name="region_id", nullable = false)
+  private Region region;
 
-  @Column(name="category_id", nullable = false)
-  private Long categoryId;
+  @ManyToOne
+  @JoinColumn(name="category_id", nullable = false)
+  private Category category;
 
   @Column(nullable = false)
   private String name;
@@ -64,8 +70,8 @@ public class Store extends Timestamped {
 
 
   public void update(StoreRequestDto storeRequestDto) {
-    this.regionId = storeRequestDto.getRegionId();
-    this.categoryId = storeRequestDto.getCategoryId();
+    this.region = storeRequestDto.getRegion();
+    this.category = storeRequestDto.getCategory();
     this.name = storeRequestDto.getName();
     this.phone = storeRequestDto.getPhone();
     this.description = storeRequestDto.getDescription();
