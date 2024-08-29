@@ -1,5 +1,7 @@
 package com.sparta.aiverification.region.service;
 
+import com.sparta.aiverification.region.dto.RegionRequestDto;
+import com.sparta.aiverification.region.dto.RegionResponseDto;
 import com.sparta.aiverification.region.entity.Region;
 import com.sparta.aiverification.region.repository.RegionRepository;
 import java.util.ArrayList;
@@ -17,32 +19,32 @@ public class RegionService {
   private final RegionRepository regionRepository;
 
   @Transactional
-  public String createRegion(String regionName) {
-    Region region = Region.builder().name(regionName).build();
+  public RegionResponseDto createRegion(RegionRequestDto regionRequestDto) {
+    Region region = Region.builder().name(regionRequestDto.getRegionName()).build();
     regionRepository.save(region);
-    return region.getId().toString();
+    return new RegionResponseDto(region);
   }
 
-  public List<String> getRegionList() {
-    List<String> regionList = new ArrayList<>();
+  public List<RegionResponseDto> getRegionList() {
+    List<RegionResponseDto> regionList = new ArrayList<>();
 
     List<Region> regionResponseList = regionRepository.findAll();
     for(Region region : regionResponseList){
-      regionList.add(region.getName());
+      regionList.add(new RegionResponseDto(region));
     }
     return regionList;
   }
 
-  public String getRegion(Long regionId) {
+  public RegionResponseDto getRegion(Long regionId) {
     Region region = regionRepository.findById(regionId).orElseThrow(NoSuchElementException::new);
-    return region.getName();
+    return new RegionResponseDto(region);
   }
 
   @Transactional
-  public String updateRegion(Long regionId, String regionName) {
+  public RegionResponseDto updateRegion(Long regionId, String regionName) {
     Region region = regionRepository.findById(regionId).orElseThrow(NoSuchElementException::new);
     region.update(regionName);
-    return region.getId().toString();
+    return new RegionResponseDto(region);
   }
 
   @Transactional
