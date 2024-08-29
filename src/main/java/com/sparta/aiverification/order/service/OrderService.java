@@ -103,6 +103,17 @@ public class OrderService {
     }
 
 
+    @Transactional
+    public OrderResponseDto.UpdateResponseDto updateOrder(User user
+            ,OrderRequestDto.UpdateRequestDto requestDto) {
+        Order order = findById(requestDto.getOrderId());
+        if(!user.getId().equals(order.getUser().getId()))
+            throw new RestApiException(OrderErrorCode.BAD_REQUEST_ORDER);
+        order.updateDetail(requestDto.getDetail());
+        return OrderResponseDto.UpdateResponseDto.of(order);
+    }
+
+
     private Order createEmptyOrder(User user, Store store, String detail) {
         List<OrderMenu> orderMenuList = new ArrayList<>();
         return Order.builder()
@@ -116,5 +127,4 @@ public class OrderService {
     private Order findById(UUID orderId){
         return orderRepository.findById(orderId).orElseThrow(() -> new RestApiException(OrderErrorCode.NOT_FOUND_ORDER));
     }
-
 }

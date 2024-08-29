@@ -52,4 +52,25 @@ public class OrderResponseDto {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateResponseDto{
+
+        private UUID orderId;
+
+        private Integer totalPrice;
+
+        private String details;
+        public static UpdateResponseDto of(Order order){
+            return UpdateResponseDto.builder()
+                    .orderId(order.getId())
+                    .totalPrice(order.getTotalPrice())
+                    .details(order.getDetail())
+                    .build();
+        }
+    }
+
 }

@@ -25,4 +25,14 @@ public class OrderRequestDto {
 
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateRequestDto {
+
+        private UUID orderId;
+        private String detail;
+
+    }
 }

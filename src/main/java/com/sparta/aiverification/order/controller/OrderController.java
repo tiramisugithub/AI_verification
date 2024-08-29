@@ -52,9 +52,17 @@ public class OrderController {
     // 해당 가게에 대한 전체 조회
     @GetMapping("/store/{storeId}")
     public RestApiResponse<List<OrderResponseDto.GetResponseDto>> getOrdersByStore(
-            @PathVariable UUID storeId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID storeId) {
         return RestApiResponse.success(orderService.getOrdersByStore(userDetails.getUser(), storeId));
+    }
+
+    // 요구사항 수정
+    @PatchMapping
+    public RestApiResponse<OrderResponseDto.UpdateResponseDto> updateOrder(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody OrderRequestDto.UpdateRequestDto requestDto) {
+        return RestApiResponse.success(orderService.updateOrder(userDetails.getUser(), requestDto));
     }
 
 }
