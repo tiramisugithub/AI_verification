@@ -41,9 +41,9 @@ public class CategoryService {
   }
 
   @Transactional
-  public CategoryResponseDto updateCategory(Long categoryId, String categoryName) {
+  public CategoryResponseDto updateCategory(Long categoryId, CategoryRequestDto categoryRequestDto) {
     Category category = categoryRepository.findById(categoryId).orElseThrow(NoSuchElementException::new);
-    category.update(categoryName);
+    category.update(categoryRequestDto.getCategoryName());
     return new CategoryResponseDto(category);
   }
 
