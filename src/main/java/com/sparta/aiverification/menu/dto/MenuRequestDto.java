@@ -1,5 +1,6 @@
 package com.sparta.aiverification.menu.dto;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MenuRequestDto {
+  private UUID storId;
   private String name;
   private int price;
   private String description;
