@@ -36,10 +36,22 @@ public class StoreController {
     return storeService.createStore(storeRequestDto);
   }
 
-  // 1. 가게 목록 조회
+  // 1.1 가게 목록 조회
   @GetMapping
   public List<StoreResponseDto> getAllStores() {
     return storeService.getAllStores();
+  }
+
+  // 1.2 카테고리별 가게 목록 조회
+  @GetMapping("/categories/{categoryId}}")
+  public List<StoreResponseDto> getAllStoresByCategoryId(@PathVariable("categoryId") Long categoryId) {
+    return storeService.getAllStoresByCategoryId(categoryId);
+  }
+
+  // 1.3 지역 별 가게 목록 조회
+  @GetMapping("/regions/{regionId}")
+  public List<StoreResponseDto> getAllStoresByRegionId(@PathVariable("regionId") Long regionId) {
+    return storeService.getAllStoresByRegionId(regionId);
   }
 
   // 2. 가게 정보 조회

@@ -88,7 +88,7 @@ public class MenuService {
   public void deleteMenu(UUID menuId) {
     Menu menu = menuRepository.findById(menuId)
         .orElseThrow(() -> new RuntimeException("Menu not found"));
-    menu.delete("current_user");
+
     menu.setStatusFalse();
   }
 }

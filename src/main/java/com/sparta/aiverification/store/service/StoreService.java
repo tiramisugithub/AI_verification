@@ -25,8 +25,8 @@ public class StoreService {
   public StoreResponseDto createStore(StoreRequestDto storeRequestDto) {
     Store store = Store.builder()
         .userId(Long.valueOf(1))
-        .regionId(storeRequestDto.getRegionId())
-        .categoryId(storeRequestDto.getCategoryId())
+        .region(storeRequestDto.getRegion())
+        .category(storeRequestDto.getCategory())
         .address(storeRequestDto.getAddress())
         .name(storeRequestDto.getName())
         .phone(storeRequestDto.getPhone())
@@ -39,9 +39,31 @@ public class StoreService {
     return new StoreResponseDto(store);
   }
 
-  // 1. 가게 목록 조회
+  // 1.1 가게 목록 조회
   public List<StoreResponseDto> getAllStores() {
     List<Store> stores = storeRepository.findAll();
+
+    List<StoreResponseDto> storeResponseDtoList = new ArrayList<>();
+    for (Store store : stores) {
+      storeResponseDtoList.add(new StoreResponseDto(store));
+    }
+    return storeResponseDtoList;
+  }
+
+  // 1.2 카테고리 별 가게 목록 조회
+  public List<StoreResponseDto> getAllStoresByCategoryId(Long categoryId) {
+    List<Store> stores = storeRepository.findAllByCategoryId(categoryId);
+
+    List<StoreResponseDto> storeResponseDtoList = new ArrayList<>();
+    for (Store store : stores) {
+      storeResponseDtoList.add(new StoreResponseDto(store));
+    }
+    return storeResponseDtoList;
+  }
+
+  // 1.3 지역별 별 가게 목록 조회
+  public List<StoreResponseDto> getAllStoresByRegionId(Long regionId) {
+    List<Store> stores = storeRepository.findAllByRegionId(regionId);
 
     List<StoreResponseDto> storeResponseDtoList = new ArrayList<>();
     for (Store store : stores) {
