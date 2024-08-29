@@ -1,20 +1,27 @@
 package com.sparta.aiverification.menu.entity;
 
 import com.sparta.aiverification.Timestamped;
+import com.sparta.aiverification.menu.dto.MenuRequestDto;
 import com.sparta.aiverification.store.entity.Store;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -23,10 +30,7 @@ public class Menu extends Timestamped {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name="menu_id", nullable = false, updatable = false)
-  private String id;
-
-  @Column(name="store_id", nullable = false, updatable = false)
-  private String storeId;
+  private UUID id;
 
   @Column(nullable = false)
   private String name;
@@ -40,18 +44,17 @@ public class Menu extends Timestamped {
   @Column(nullable = false)
   private Boolean status = false;
 
-  @ManyToOne
-  @JoinColumn(name = "store_id")
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "store_id", nullable = false)
   private Store store;
 
-  @Builder
-  public Menu(String id, String storeId, String name, int price, String description, Boolean status, Store store) {
-    this.id = id;
-    this.storeId = storeId;
-    this.name = name;
-    this.price = price;
-    this.description = description;
-    this.status = status;
-    this.store = store;
+  public void update(MenuRequestDto menuRequestDto) {
+    this.name = menuRequestDto.getName();
+    this.price = menuRequestDto.getPrice();
+    this.description = menuRequestDto.getDescription();
+  }
+
+  public void setStatusFalse() {
+    this.status = false;
   }
 }

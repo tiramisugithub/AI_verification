@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StoreRequestDto {
-  private String categoryId;
-  private String regionId;
+  private Long categoryId;
+  private Long regionId;
   private String name;
   private String phone;
   private String address;
   private String description;
-  private boolean status;
+  private boolean status = true;
 }
