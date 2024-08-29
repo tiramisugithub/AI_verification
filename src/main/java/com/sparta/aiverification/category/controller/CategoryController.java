@@ -1,5 +1,6 @@
 package com.sparta.aiverification.category.controller;
 
+import com.sparta.aiverification.category.dto.CategoryRequestDto;
 import com.sparta.aiverification.category.dto.CategoryResponseDto;
 import com.sparta.aiverification.category.service.CategoryService;
 import java.util.List;
@@ -27,8 +28,8 @@ public class CategoryController {
 
   // 1. 카테고리 생성
   @PostMapping
-  public CategoryResponseDto createCategory(@RequestBody String categoryName) {
-    return categoryService.createCategory(categoryName);
+  public CategoryResponseDto createCategory(@RequestBody CategoryRequestDto categoryRequestDto) {
+    return categoryService.createCategory(categoryRequestDto);
   }
 
   // 2. 카테고리 목록 조회

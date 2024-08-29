@@ -1,5 +1,6 @@
 package com.sparta.aiverification.category.service;
 
+import com.sparta.aiverification.category.dto.CategoryRequestDto;
 import com.sparta.aiverification.category.dto.CategoryResponseDto;
 import com.sparta.aiverification.category.entity.Category;
 import com.sparta.aiverification.category.repository.CategoryRepository;
@@ -19,8 +20,8 @@ public class CategoryService {
   private final CategoryRepository categoryRepository;
 
   @Transactional
-  public CategoryResponseDto createCategory(String categoryName) {
-    Category category = Category.builder().name(categoryName).build();
+  public CategoryResponseDto createCategory(CategoryRequestDto categoryRequestDto) {
+    Category category = Category.builder().name(categoryRequestDto.getCategoryName()).build();
     categoryRepository.save(category);
     return new CategoryResponseDto(category);
   }
@@ -49,6 +50,7 @@ public class CategoryService {
   @Transactional
   public void deleteCategory(Long categoryId) {
     Category category = categoryRepository.findById(categoryId).orElseThrow(NoSuchElementException::new);
+    categoryRepository.deleteById(categoryId);
     // category.delete("username");
   }
 }
