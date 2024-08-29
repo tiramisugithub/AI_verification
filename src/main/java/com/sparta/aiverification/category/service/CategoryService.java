@@ -69,6 +69,6 @@ public class CategoryService {
 
     Category category = categoryRepository.findById(categoryId).orElseThrow(NoSuchElementException::new);
     categoryRepository.deleteById(categoryId);
-    // category.delete("username");
+    category.delete(user.getId());
   }
 }

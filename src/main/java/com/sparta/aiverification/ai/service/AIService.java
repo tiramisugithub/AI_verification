@@ -77,6 +77,6 @@ public class AIService {
     userValidate(user);
 
     AI ai = aiRepository.findById(aiId).orElseThrow(NoSuchElementException::new);
-    // ai.delete();
+     ai.delete(user.getId());
   }
 }

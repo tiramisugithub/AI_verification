@@ -68,6 +68,7 @@ public class RegionService {
     userValidate(user);
 
     Region region = regionRepository.findById(regionId).orElseThrow(NoSuchElementException::new);
+
     region.delete(user.getId());
   }
 }
