@@ -6,6 +6,8 @@ import com.sparta.aiverification.ai.entity.AI;
 import com.sparta.aiverification.ai.repository.AIRepository;
 import com.sparta.aiverification.menu.entity.Menu;
 import com.sparta.aiverification.menu.repository.MenuRepository;
+import com.sparta.aiverification.user.entity.User;
+import com.sparta.aiverification.user.enums.UserRoleEnum;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +23,18 @@ public class AIService {
   private final AIRepository aiRepository;
   private final MenuRepository menuRepository;
 
+  private static void userValidate(User user) {
+    // validation
+    if (user.getRole() == UserRoleEnum.CUSTOMER) {
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+    }
+  }
+
   @Transactional
-  public AIResponseDto createAI(AIRequestDto aiRequestDto) {
+  public AIResponseDto createAI(User user, AIRequestDto aiRequestDto) {
+    // validation
+    userValidate(user);
+
     Menu menu = menuRepository.findById(aiRequestDto.getMenuId())
         .orElseThrow(() -> new NoSuchElementException("Menu with ID " + aiRequestDto.getMenuId() + " not found"));
 
@@ -35,7 +47,7 @@ public class AIService {
     return new AIResponseDto(ai);
   }
 
-  public List<AIResponseDto> createAIList() {
+  public List<AIResponseDto> getAIList() {
     List<AIResponseDto> aiResponseDtoList = new ArrayList<>();
 
     List<AI> aiList = aiRepository.findAll();
@@ -51,13 +63,19 @@ public class AIService {
   }
 
   @Transactional
-  public AIResponseDto updateAI(Long aiId, AIRequestDto aiRequestDto) {
+  public AIResponseDto updateAI(Long aiId, User user, AIRequestDto aiRequestDto) {
+    // validation
+    userValidate(user);
+
     AI ai = aiRepository.findById(aiId).orElseThrow(NoSuchElementException::new);
     ai.update(aiRequestDto);
     return new AIResponseDto(ai);
   }
   @Transactional
-  public void deleteAI(Long aiId) {
+  public void deleteAI(Long aiId, User user) {
+    // validation
+    userValidate(user);
+
     AI ai = aiRepository.findById(aiId).orElseThrow(NoSuchElementException::new);
     // ai.delete();
   }
