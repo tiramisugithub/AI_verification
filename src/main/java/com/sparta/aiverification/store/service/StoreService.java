@@ -9,6 +9,8 @@ import com.sparta.aiverification.store.dto.StoreRequestDto;
 import com.sparta.aiverification.store.dto.StoreResponseDto;
 import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.store.repository.StoreRepository;
+import com.sparta.aiverification.user.entity.User;
+import com.sparta.aiverification.user.enums.UserRoleEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -28,15 +30,21 @@ public class StoreService {
   private final RegionRepository regionRepository;
   private final CategoryRepository categoryRepository;
 
-  @Transactional
-  public StoreResponseDto createStore(StoreRequestDto storeRequestDto) {
 
+  @Transactional
+  public StoreResponseDto createStore(User user, StoreRequestDto storeRequestDto) {
+
+    // validation
+    if (user.getRole() == UserRoleEnum.CUSTOMER) {
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+    }
     Region region = regionRepository.findById(storeRequestDto.getRegionId())
         .orElseThrow(() -> new NoSuchElementException("Region with ID " + storeRequestDto.getRegionId() + " not found"));
 
     Category category = categoryRepository.findById(storeRequestDto.getCategoryId())
         .orElseThrow(() -> new NoSuchElementException("Category with ID " + storeRequestDto.getCategoryId() + " not found"));
 
+    // execute
     Store store = Store.builder()
         .userId(Long.valueOf(1))
         .region(region)
@@ -96,13 +104,18 @@ public class StoreService {
 
   // 3. 가게 정보 수정
   @Transactional
-  public StoreResponseDto updateStore(UUID storeId, StoreRequestDto storeRequestDto) {
+  public StoreResponseDto updateStore(UUID storeId, User user, StoreRequestDto storeRequestDto) {
+    // validation
+    if (user.getRole() == UserRoleEnum.CUSTOMER) {
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+    }
     Region region = regionRepository.findById(storeRequestDto.getRegionId())
         .orElseThrow(() -> new NoSuchElementException("Region with ID " + storeRequestDto.getRegionId() + " not found"));
 
     Category category = categoryRepository.findById(storeRequestDto.getCategoryId())
         .orElseThrow(() -> new NoSuchElementException("Category with ID " + storeRequestDto.getCategoryId() + " not found"));
 
+    // execute
     Store store = storeRepository.findById(storeId)
         .orElseThrow(() -> new NoSuchElementException("Store with ID " + storeId + " not found"));
 
@@ -112,11 +125,16 @@ public class StoreService {
 
   // 4. 가게 정보 삭제 및 연관된 메뉴 삭제
   @Transactional
-  public void deleteStoreAndMenus(UUID storeId) {
+  public void deleteStoreAndMenus(UUID storeId, User user) {
+    // validation
+    if (user.getRole() == UserRoleEnum.CUSTOMER) {
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+    }
+    // execute
     Store store = storeRepository.findById(storeId)
         .orElseThrow(() -> new RuntimeException("Store not found"));
-     // store.delete("current_user");
-     store.setStatusFalse();;
 
+      store.delete(user.getId());
+     store.setStatusFalse();;
   }
 }
