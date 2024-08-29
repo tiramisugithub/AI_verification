@@ -2,6 +2,7 @@ package com.sparta.aiverification.store.entity;
 
 import com.sparta.aiverification.Timestamped;
 import com.sparta.aiverification.menu.entity.Menu;
+import com.sparta.aiverification.store.dto.StoreRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,11 +13,15 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder()
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -25,16 +30,16 @@ public class Store extends Timestamped {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name="store_id", nullable = false, updatable = false)
-  private String id;
+  private UUID id;
 
   @Column(name="user_id", nullable = false, updatable = false)
-  private String userId;
+  private UUID userId;
 
   @Column(name="region_id", nullable = false)
-  private String regionId;
+  private Long regionId;
 
   @Column(name="category_id", nullable = false)
-  private String categoryId;
+  private Long categoryId;
 
   @Column(nullable = false)
   private String name;
@@ -53,19 +58,21 @@ public class Store extends Timestamped {
 
 
   // Cascade.PERSIST : 영속성 전이 : 영속 상태의 작업들이 연관된 엔티티들까지 전파
-  @OneToMany(mappedBy = "store", cascade = CascadeType.PERSIST)
-  private List<Menu> menuList = new ArrayList<>();
+  @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<Menu> menus = new ArrayList<>();
 
-  @Builder
-  public Store(String userId, String regionId, String categoryId, String name, String address, String phone, String description, Boolean status) {
-    this.userId = userId;
-    this.regionId = regionId;
-    this.categoryId = categoryId;
-    this.name = name;
-    this.address = address;
-    this.phone = phone;
-    this.description = description;
-    this.status = status;
 
+  public void update(StoreRequestDto storeRequestDto) {
+    this.regionId = storeRequestDto.getRegionId();
+    this.categoryId = storeRequestDto.getCategoryId();
+    this.name = storeRequestDto.getName();
+    this.phone = storeRequestDto.getPhone();
+    this.description = storeRequestDto.getDescription();
+    this.address = storeRequestDto.getAddress();
+  }
+
+  public void setStatusFalse() {
+    this.status = false;
   }
 }
