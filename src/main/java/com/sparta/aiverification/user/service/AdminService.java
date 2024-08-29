@@ -7,6 +7,7 @@ import com.sparta.aiverification.user.jwt.JwtUtil;
 import com.sparta.aiverification.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,14 @@ public class AdminService {
         String roleName = userDetails.getAuthorities().toString();
         log.info("@@@AdminService : {}" ,roleName); // 인증 객체의 권한 확인
 
-        if(!roleName.equals("[ROLE_MASTER]")) {
+        boolean hasRoleMaster = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                        .allMatch("ROLE_MASTER"::equals);
+
+        if(!hasRoleMaster){
             throw new IllegalArgumentException("MASTER 권한이 있어야 MASTER 또는 MANAGER 계정을 생성할 수 있습니다.");
         }
+
         createAdminAccount(requestDto, role);
     }
 
