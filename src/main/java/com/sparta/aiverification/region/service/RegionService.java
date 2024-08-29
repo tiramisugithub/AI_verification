@@ -41,9 +41,9 @@ public class RegionService {
   }
 
   @Transactional
-  public RegionResponseDto updateRegion(Long regionId, String regionName) {
+  public RegionResponseDto updateRegion(Long regionId, RegionRequestDto regionRequestDto) {
     Region region = regionRepository.findById(regionId).orElseThrow(NoSuchElementException::new);
-    region.update(regionName);
+    region.update(regionRequestDto.getRegionName());
     return new RegionResponseDto(region);
   }
 

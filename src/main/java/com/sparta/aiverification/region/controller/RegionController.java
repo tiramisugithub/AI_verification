@@ -39,19 +39,19 @@ public class RegionController {
 
   // 3. 지역 정보 조회
   @GetMapping("/{regionId}")
-  public RegionResponseDto getRegion(@PathVariable Long regionId) {
+  public RegionResponseDto getRegion(@PathVariable("regionId") Long regionId) {
     return regionService.getRegion(regionId);
   }
 
   // 4. 지역 수정
   @PutMapping("/{regionId}")
-  public RegionResponseDto updateRegion(@PathVariable Long regionId, @RequestBody String regionName) {
-    return regionService.updateRegion(regionId, regionName);
+  public RegionResponseDto updateRegion(@PathVariable("regionId") Long regionId, @RequestBody RegionRequestDto regionRequestDto) {
+    return regionService.updateRegion(regionId, regionRequestDto);
   }
 
   // 5. 지역 삭제
   @DeleteMapping("/{regionId}")
-  public ResponseEntity<String> deleteRegion(@PathVariable Long regionId) {
+  public ResponseEntity<String> deleteRegion(@PathVariable("regionId") Long regionId) {
     regionService.deleteRegion(regionId);
     return ResponseEntity.ok("지역이 삭제되었습니다.");
   }
