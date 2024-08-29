@@ -39,21 +39,21 @@ public class AIController {
 
   // 3. AI 정보 조회
   @GetMapping("/{aiId}")
-  public AIResponseDto getAI(@PathVariable Long aiId) {
+  public AIResponseDto getAI(@PathVariable("aiId") Long aiId) {
     return aiService.getAI(aiId);
   }
 
   // 4. AI 수정
   @PutMapping("/{aiId}")
-  public AIResponseDto updateAI(@PathVariable Long aiId, @RequestBody AIRequestDto aiRequestDto) {
+  public AIResponseDto updateAI(@PathVariable("aiId") Long aiId, @RequestBody AIRequestDto aiRequestDto) {
     return aiService.updateAI(aiId, aiRequestDto);
   }
 
   // 5. AI 삭제
   @DeleteMapping("/{aiId}")
-  public ResponseEntity<String> deleteAI(@PathVariable Long aiId) {
+  public ResponseEntity<String> deleteAI(@PathVariable("aiId") Long aiId) {
     aiService.deleteAI(aiId);
-    return ResponseEntity.ok("지역이 삭제되었습니다.");
+    return ResponseEntity.ok("ai 질문내역이 삭제되었습니다.");
   }
 
 }
