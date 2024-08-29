@@ -33,7 +33,7 @@ public class Store extends Timestamped {
   private UUID id;
 
   @Column(name="user_id", nullable = false, updatable = false)
-  private UUID userId;
+  private Long userId;
 
   @Column(name="region_id", nullable = false)
   private Long regionId;
