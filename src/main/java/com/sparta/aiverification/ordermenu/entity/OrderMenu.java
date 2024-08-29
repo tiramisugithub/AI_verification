@@ -1,6 +1,6 @@
 package com.sparta.aiverification.ordermenu.entity;
 
-import com.sparta.aiverification.Timestamped;
+import com.sparta.aiverification.common.Timestamped;
 import com.sparta.aiverification.order.entity.Order;
 import com.sparta.aiverification.tmp.entity.Menu;
 import jakarta.persistence.*;

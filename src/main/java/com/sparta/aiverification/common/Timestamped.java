@@ -1,5 +1,6 @@
-package com.sparta.aiverification;
+package com.sparta.aiverification.common;
 
+import com.sparta.aiverification.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,28 +25,27 @@ public abstract class Timestamped {
 
   @CreatedBy
   @Column(updatable = false)
-  private String createdBy;
+  private Long createdBy;
 
   @LastModifiedDate
-  @Column
+  @Column(updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime updatedAt;
 
   @LastModifiedBy
-  @Column()
-  private String updatedBy;
+  @Column(updatable = false)
+  private Long updatedBy;
 
 
   @Column
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime deletedAt;
 
-  @Column(updatable = false)
-  private String deletedBy;
+  private Long deletedBy;
 
   // 소프트 삭제 메서드
-  public void delete(String deletedByUser) {
+  public void delete(Long deletedBy) {
     this.deletedAt = LocalDateTime.now();
-    this.deletedBy = deletedByUser;
+    this.deletedBy = deletedBy;
   }
 }

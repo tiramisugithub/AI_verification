@@ -65,4 +65,11 @@ public class OrderController {
         return RestApiResponse.success(orderService.updateOrder(userDetails.getUser(), requestDto));
     }
 
+    @DeleteMapping("/{orderId}")
+    public RestApiResponse<OrderResponseDto.DeleteResponseDto> deleteOrder(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID orderId) {
+        return RestApiResponse.success(orderService.deleteOrder(userDetails.getUser(), orderId));
+    }
+
 }

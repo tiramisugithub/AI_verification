@@ -1,7 +1,7 @@
 package com.sparta.aiverification.order.entity;
 
 
-import com.sparta.aiverification.Timestamped;
+import com.sparta.aiverification.common.Timestamped;
 import com.sparta.aiverification.ordermenu.entity.OrderMenu;
 import com.sparta.aiverification.tmp.entity.Store;
 import com.sparta.aiverification.user.entity.User;
@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class Order extends Timestamped {
 
     private Integer totalPrice;
 
-    private Boolean status;
+    private Boolean status = true;
 
     @Builder
     public Order(User user, Store store, List<OrderMenu> orderMenuList,
@@ -62,5 +63,14 @@ public class Order extends Timestamped {
 
     public void updateTotalPrice(Integer totalPrice){
         this.totalPrice = totalPrice;
+    }
+
+    public void updateDetail(String detail) {
+        this.detail = detail;
+    }
+
+    public void deleteOrder(Long userId){
+        this.delete(userId);
+        this.status = false;
     }
 }

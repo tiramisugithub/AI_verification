@@ -106,11 +106,26 @@ public class OrderService {
     @Transactional
     public OrderResponseDto.UpdateResponseDto updateOrder(User user
             ,OrderRequestDto.UpdateRequestDto requestDto) {
+        if(user.getRole() != UserRoleEnum.CUSTOMER)
+            throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         Order order = findById(requestDto.getOrderId());
         if(!user.getId().equals(order.getUser().getId()))
             throw new RestApiException(OrderErrorCode.BAD_REQUEST_ORDER);
         order.updateDetail(requestDto.getDetail());
         return OrderResponseDto.UpdateResponseDto.of(order);
+    }
+
+    @Transactional
+    public OrderResponseDto.DeleteResponseDto deleteOrder(User user, UUID orderId) {
+        Order order = findById(orderId);
+        if(user.getRole() == UserRoleEnum.OWNER){
+            throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
+        }
+        if(!order.getUser().getId().equals(user.getId())){
+            throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
+        }
+        order.deleteOrder(user.getId());
+        return OrderResponseDto.DeleteResponseDto.of(order);
     }
 
 
@@ -121,10 +136,12 @@ public class OrderService {
                 .store(store)
                 .orderMenuList(orderMenuList)
                 .detail(detail)
+                .status(true)
                 .build();
     }
 
     private Order findById(UUID orderId){
         return orderRepository.findById(orderId).orElseThrow(() -> new RestApiException(OrderErrorCode.NOT_FOUND_ORDER));
     }
+
 }

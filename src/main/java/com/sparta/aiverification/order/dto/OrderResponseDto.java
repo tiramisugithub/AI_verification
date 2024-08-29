@@ -1,5 +1,6 @@
 package com.sparta.aiverification.order.dto;
 
+import com.sparta.aiverification.common.Timestamped;
 import com.sparta.aiverification.order.entity.Order;
 import com.sparta.aiverification.ordermenu.dto.OrderMenuResponseDto;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,4 +75,21 @@ public class OrderResponseDto {
         }
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteResponseDto {
+
+        private LocalDateTime deletedAt;
+
+        private Long deletedBy;
+
+        public static DeleteResponseDto of(Order order){
+            return DeleteResponseDto.builder()
+                    .deletedAt(order.getDeletedAt())
+                    .deletedBy(order.getDeletedBy())
+                    .build();
+        }
+    }
 }
