@@ -1,5 +1,7 @@
 package com.sparta.aiverification.region.controller;
 
+import com.sparta.aiverification.region.dto.RegionRequestDto;
+import com.sparta.aiverification.region.dto.RegionResponseDto;
 import com.sparta.aiverification.region.service.RegionService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,25 +27,25 @@ public class RegionController {
   }
   // 1. 지역 생성
   @PostMapping
-  public String createRegion(@RequestBody String regionName) {
-    return regionService.createRegion(regionName);
+  public RegionResponseDto createRegion(@RequestBody RegionRequestDto regionRequestDto) {
+    return regionService.createRegion(regionRequestDto);
   }
 
   // 2. 지역 목록 조회
   @GetMapping
-  public List<String> getRegionList() {
+  public List<RegionResponseDto> getRegionList() {
     return regionService.getRegionList();
   }
 
   // 3. 지역 정보 조회
   @GetMapping("/{regionId}")
-  public String getRegion(@PathVariable Long regionId) {
+  public RegionResponseDto getRegion(@PathVariable Long regionId) {
     return regionService.getRegion(regionId);
   }
 
   // 4. 지역 수정
   @PutMapping("/{regionId}")
-  public String updateRegion(@PathVariable Long regionId, @RequestBody String regionName) {
+  public RegionResponseDto updateRegion(@PathVariable Long regionId, @RequestBody String regionName) {
     return regionService.updateRegion(regionId, regionName);
   }
 
