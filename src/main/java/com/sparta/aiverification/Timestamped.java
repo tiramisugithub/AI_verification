@@ -1,6 +1,5 @@
-package com.sparta.aiverification.common;
+package com.sparta.aiverification;
 
-import com.sparta.aiverification.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
