@@ -20,8 +20,8 @@ public class RegionController {
   private  final RegionService regionService;
 
   @Autowired
-  public RegionController(RegionService regionService){
-    this.regionService = regionService;
+  public RegionController(RegionService RegionService){
+    this.regionService = RegionService;
   }
   // 1. 지역 생성
   @PostMapping
