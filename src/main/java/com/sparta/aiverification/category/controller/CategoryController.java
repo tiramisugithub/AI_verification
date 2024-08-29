@@ -3,9 +3,11 @@ package com.sparta.aiverification.category.controller;
 import com.sparta.aiverification.category.dto.CategoryRequestDto;
 import com.sparta.aiverification.category.dto.CategoryResponseDto;
 import com.sparta.aiverification.category.service.CategoryService;
+import com.sparta.aiverification.user.security.UserDetailsImpl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,8 +30,8 @@ public class CategoryController {
 
   // 1. 카테고리 생성
   @PostMapping
-  public CategoryResponseDto createCategory(@RequestBody CategoryRequestDto categoryRequestDto) {
-    return categoryService.createCategory(categoryRequestDto);
+  public CategoryResponseDto createCategory(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody CategoryRequestDto categoryRequestDto) {
+    return categoryService.createCategory(userDetailsImpl.getUser(), categoryRequestDto);
   }
 
   // 2. 카테고리 목록 조회
@@ -46,14 +48,14 @@ public class CategoryController {
 
   // 4. 카테고리 수정
   @PutMapping("/{categoryId}")
-  public CategoryResponseDto updateCategory(@PathVariable("categoryId") Long categoryId, @RequestBody CategoryRequestDto categoryRequestDto) {
-    return categoryService.updateCategory(categoryId, categoryRequestDto);
+  public CategoryResponseDto updateCategory(@PathVariable("categoryId") Long categoryId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody CategoryRequestDto categoryRequestDto) {
+    return categoryService.updateCategory(categoryId, userDetailsImpl.getUser(), categoryRequestDto);
   }
 
   // 5. 카테고리 삭제
   @DeleteMapping("/{categoryId}")
-  public ResponseEntity<String> deleteCategory(@PathVariable("categoryId") Long categoryId) {
-    categoryService.deleteCategory(categoryId);
+  public ResponseEntity<String> deleteCategory(@PathVariable("categoryId") Long categoryId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    categoryService.deleteCategory(categoryId, userDetailsImpl.getUser()) ;
     return ResponseEntity.ok("카테고리가 삭제되었습니다");
   }
 
