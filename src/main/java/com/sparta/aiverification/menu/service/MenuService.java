@@ -25,7 +25,7 @@ public class MenuService {
   // 1. 메뉴 생성
   @Transactional
   public MenuResponseDto createMenu(MenuRequestDto menuRequestDto) {
-    Store store = storeRepository.findById(menuRequestDto.getStorId())
+    Store store = storeRepository.findById(menuRequestDto.getStoreId())
         .orElseThrow(() -> new RuntimeException("Store not found"));
 
     Menu menu = Menu.builder()
