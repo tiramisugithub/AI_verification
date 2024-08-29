@@ -33,7 +33,7 @@ public class Category extends Timestamped {
   @Column(nullable = false)
   private String name;
 
-  @OneToMany(mappedBy = "store", cascade = CascadeType.PERSIST)
+  @OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST)
   private List<Store> storeList = new ArrayList<>();
 
   public void update(String categoryName){
