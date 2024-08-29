@@ -3,9 +3,11 @@ package com.sparta.aiverification.region.controller;
 import com.sparta.aiverification.region.dto.RegionRequestDto;
 import com.sparta.aiverification.region.dto.RegionResponseDto;
 import com.sparta.aiverification.region.service.RegionService;
+import com.sparta.aiverification.user.security.UserDetailsImpl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,8 +29,8 @@ public class RegionController {
   }
   // 1. 지역 생성
   @PostMapping
-  public RegionResponseDto createRegion(@RequestBody RegionRequestDto regionRequestDto) {
-    return regionService.createRegion(regionRequestDto);
+  public RegionResponseDto createRegion(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody RegionRequestDto regionRequestDto) {
+    return regionService.createRegion(userDetailsImpl.getUser(), regionRequestDto);
   }
 
   // 2. 지역 목록 조회
@@ -45,14 +47,14 @@ public class RegionController {
 
   // 4. 지역 수정
   @PutMapping("/{regionId}")
-  public RegionResponseDto updateRegion(@PathVariable("regionId") Long regionId, @RequestBody RegionRequestDto regionRequestDto) {
-    return regionService.updateRegion(regionId, regionRequestDto);
+  public RegionResponseDto updateRegion(@PathVariable("regionId") Long regionId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody RegionRequestDto regionRequestDto) {
+    return regionService.updateRegion(regionId, userDetailsImpl.getUser(), regionRequestDto);
   }
 
   // 5. 지역 삭제
   @DeleteMapping("/{regionId}")
-  public ResponseEntity<String> deleteRegion(@PathVariable("regionId") Long regionId) {
-    regionService.deleteRegion(regionId);
+  public ResponseEntity<String> deleteRegion(@PathVariable("regionId") Long regionId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    regionService.deleteRegion(regionId, userDetailsImpl.getUser());
     return ResponseEntity.ok("지역이 삭제되었습니다.");
   }
 

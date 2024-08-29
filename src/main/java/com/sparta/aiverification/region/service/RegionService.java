@@ -4,6 +4,8 @@ import com.sparta.aiverification.region.dto.RegionRequestDto;
 import com.sparta.aiverification.region.dto.RegionResponseDto;
 import com.sparta.aiverification.region.entity.Region;
 import com.sparta.aiverification.region.repository.RegionRepository;
+import com.sparta.aiverification.user.entity.User;
+import com.sparta.aiverification.user.enums.UserRoleEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -18,8 +20,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegionService {
   private final RegionRepository regionRepository;
 
+  private static void userValidate(User user) {
+    // validation
+    if (user.getRole() != UserRoleEnum.MASTER && user.getRole() != UserRoleEnum.MANAGER) {
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+    }
+  }
+
   @Transactional
-  public RegionResponseDto createRegion(RegionRequestDto regionRequestDto) {
+  public RegionResponseDto createRegion(User user, RegionRequestDto regionRequestDto) {
+    // validation
+    userValidate(user);
+
     Region region = Region.builder().name(regionRequestDto.getRegionName()).build();
     regionRepository.save(region);
     return new RegionResponseDto(region);
@@ -41,15 +53,21 @@ public class RegionService {
   }
 
   @Transactional
-  public RegionResponseDto updateRegion(Long regionId, RegionRequestDto regionRequestDto) {
+  public RegionResponseDto updateRegion(Long regionId, User user, RegionRequestDto regionRequestDto) {
+    // validation
+    userValidate(user);
+
     Region region = regionRepository.findById(regionId).orElseThrow(NoSuchElementException::new);
     region.update(regionRequestDto.getRegionName());
     return new RegionResponseDto(region);
   }
 
   @Transactional
-  public void deleteRegion(Long regionId) {
+  public void deleteRegion(Long regionId, User user) {
+    // validation
+    userValidate(user);
+
     Region region = regionRepository.findById(regionId).orElseThrow(NoSuchElementException::new);
-    //region.delete("");
+    region.delete(user.getId());
   }
 }
