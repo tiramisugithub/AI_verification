@@ -1,9 +1,6 @@
 package com.sparta.aiverification.user.service;
 
-import com.sparta.aiverification.user.dto.AuthResponse;
-import com.sparta.aiverification.user.dto.LoginRequestDto;
-import com.sparta.aiverification.user.dto.SignupRequestDto;
-import com.sparta.aiverification.user.dto.UserInfoDto;
+import com.sparta.aiverification.user.dto.*;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
 import com.sparta.aiverification.user.jwt.JwtUtil;
@@ -79,6 +76,7 @@ public class UserService {
         // JWT 토큰 생성
         String token = jwtUtil.createToken(username, user.getRole());
 
+
         // AuthResponse 반환
         return AuthResponse.of(token);
     }
@@ -99,5 +97,37 @@ public class UserService {
             }
         }
         return null;
+    }
+
+    public UserResponseDto updateUser(Long userId, UserRequestDto userRequestDto) {
+        log.info("updateUser method called");
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        log.info("new password : {}", userRequestDto.getPassword());
+
+
+        // 비밀번호가 있는 경우만 인코딩
+        if (userRequestDto.getPassword() != null && !userRequestDto.getPassword().isBlank()) {
+            String encodedPassword = passwordEncoder.encode(userRequestDto.getPassword());
+            user.setPassword(encodedPassword);
+        }
+
+        // 사용자 정보 업데이트
+        user.updateInfo(userRequestDto);
+
+        // 변경된 사용자 정보를 저장
+        User updatedUser = userRepository.save(user);
+
+        // 응답 DTO 생성
+        return new UserResponseDto().of(updatedUser);
+    }
+
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        userRepository.delete(user);
+        log.info("User with ID {} has been deleted", userId);
     }
 }

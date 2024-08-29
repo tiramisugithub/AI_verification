@@ -1,6 +1,7 @@
 package com.sparta.aiverification.user.entity;
 
 
+import com.sparta.aiverification.user.dto.UserRequestDto;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,12 +33,29 @@ public class User {
     @Column(nullable = false)
     private String address;
 
+    @Setter
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
+
+    public void updateInfo(UserRequestDto userRequestDto) {
+        if(userRequestDto.getUsername() != null & !userRequestDto.getUsername().isBlank()){
+            this.username = userRequestDto.getUsername();
+        }
+        if (userRequestDto.getEmail() != null && !userRequestDto.getEmail().isBlank()) {
+            this.email = userRequestDto.getEmail();
+        }
+        if (userRequestDto.getAddress() != null && !userRequestDto.getAddress().isBlank()) {
+            this.address = userRequestDto.getAddress();
+        }
+        if (userRequestDto.getPhone() != null && !userRequestDto.getPhone().isBlank()) {
+            this.phone = userRequestDto.getPhone();
+        }
+    }
+
 }
 
 
