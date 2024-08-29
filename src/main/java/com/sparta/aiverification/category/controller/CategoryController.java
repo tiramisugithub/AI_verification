@@ -1,5 +1,6 @@
 package com.sparta.aiverification.category.controller;
 
+import com.sparta.aiverification.category.dto.CategoryResponseDto;
 import com.sparta.aiverification.category.service.CategoryService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,25 +27,25 @@ public class CategoryController {
 
   // 1. 카테고리 생성
   @PostMapping
-  public String createCategory(@RequestBody String categoryName) {
+  public CategoryResponseDto createCategory(@RequestBody String categoryName) {
     return categoryService.createCategory(categoryName);
   }
 
   // 2. 카테고리 목록 조회
   @GetMapping
-  public List<String> getCategoryList() {
+  public List<CategoryResponseDto> getCategoryList() {
     return categoryService.getCategoryList();
   }
 
   // 3. 카테고리 정보 조회
   @GetMapping("/{categoryId}")
-  public String getCategory(@PathVariable Long categoryId) {
+  public CategoryResponseDto getCategory(@PathVariable Long categoryId) {
     return categoryService.getCategory(categoryId);
   }
 
   // 4. 카테고리 수정
   @PutMapping("/{categoryId}")
-  public String updateCategory(@PathVariable Long categoryId, @RequestBody String categoryName) {
+  public CategoryResponseDto updateCategory(@PathVariable Long categoryId, @RequestBody String categoryName) {
     return categoryService.updateCategory(categoryId, categoryName);
   }
 

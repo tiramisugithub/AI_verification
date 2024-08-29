@@ -1,11 +1,11 @@
 package com.sparta.aiverification.category.service;
 
+import com.sparta.aiverification.category.dto.CategoryResponseDto;
 import com.sparta.aiverification.category.entity.Category;
 import com.sparta.aiverification.category.repository.CategoryRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,31 +19,31 @@ public class CategoryService {
   private final CategoryRepository categoryRepository;
 
   @Transactional
-  public String createCategory(String categoryName) {
+  public CategoryResponseDto createCategory(String categoryName) {
     Category category = Category.builder().name(categoryName).build();
     categoryRepository.save(category);
-    return category.getId().toString();
+    return new CategoryResponseDto(category);
   }
 
-  public List<String> getCategoryList() {
-    List<String> categoryList = new ArrayList<>();
+  public List<CategoryResponseDto> getCategoryList() {
+    List<CategoryResponseDto> categoryList = new ArrayList<>();
     List<Category> categoryResposneList = categoryRepository.findAll();
     for(Category category : categoryResposneList){
-      categoryList.add(category.getName());
+      categoryList.add(new CategoryResponseDto(category));
     }
     return categoryList;
   }
 
-  public String getCategory(Long categoryId) {
+  public CategoryResponseDto getCategory(Long categoryId) {
     Category category = categoryRepository.findById(categoryId).orElseThrow(NoSuchElementException::new);
-    return category.getName();
+    return new CategoryResponseDto(category);
   }
 
   @Transactional
-  public String updateCategory(Long categoryId, String categoryName) {
+  public CategoryResponseDto updateCategory(Long categoryId, String categoryName) {
     Category category = categoryRepository.findById(categoryId).orElseThrow(NoSuchElementException::new);
     category.update(categoryName);
-    return category.getId().toString();
+    return new CategoryResponseDto(category);
   }
 
   @Transactional
