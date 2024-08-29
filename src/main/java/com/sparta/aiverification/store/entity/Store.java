@@ -70,9 +70,9 @@ public class Store extends Timestamped {
   private List<Menu> menus = new ArrayList<>();
 
 
-  public void update(StoreRequestDto storeRequestDto) {
-    this.region = storeRequestDto.getRegion();
-    this.category = storeRequestDto.getCategory();
+  public void update(Region region, Category category, StoreRequestDto storeRequestDto) {
+    this.region = region;
+    this.category = category;
     this.name = storeRequestDto.getName();
     this.phone = storeRequestDto.getPhone();
     this.description = storeRequestDto.getDescription();
