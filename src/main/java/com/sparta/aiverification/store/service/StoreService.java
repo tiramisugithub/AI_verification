@@ -30,14 +30,18 @@ public class StoreService {
   private final RegionRepository regionRepository;
   private final CategoryRepository categoryRepository;
 
-
-  @Transactional
-  public StoreResponseDto createStore(User user, StoreRequestDto storeRequestDto) {
-
+  private static void userValidate(User user) {
     // validation
     if (user.getRole() == UserRoleEnum.CUSTOMER) {
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
     }
+  }
+
+  @Transactional
+  public StoreResponseDto createStore(User user, StoreRequestDto storeRequestDto) {
+    // validation
+    userValidate(user);
+
     Region region = regionRepository.findById(storeRequestDto.getRegionId())
         .orElseThrow(() -> new NoSuchElementException("Region with ID " + storeRequestDto.getRegionId() + " not found"));
 
@@ -106,9 +110,8 @@ public class StoreService {
   @Transactional
   public StoreResponseDto updateStore(UUID storeId, User user, StoreRequestDto storeRequestDto) {
     // validation
-    if (user.getRole() == UserRoleEnum.CUSTOMER) {
-      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
-    }
+    userValidate(user);
+
     Region region = regionRepository.findById(storeRequestDto.getRegionId())
         .orElseThrow(() -> new NoSuchElementException("Region with ID " + storeRequestDto.getRegionId() + " not found"));
 
@@ -127,9 +130,8 @@ public class StoreService {
   @Transactional
   public void deleteStoreAndMenus(UUID storeId, User user) {
     // validation
-    if (user.getRole() == UserRoleEnum.CUSTOMER) {
-      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
-    }
+    userValidate(user);
+
     // execute
     Store store = storeRepository.findById(storeId)
         .orElseThrow(() -> new RuntimeException("Store not found"));
