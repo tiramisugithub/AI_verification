@@ -43,7 +43,7 @@ public class StoreController {
   }
 
   // 1.2 카테고리별 가게 목록 조회
-  @GetMapping("/categories/{categoryId}}")
+  @GetMapping("/categories/{categoryId}")
   public List<StoreResponseDto> getAllStoresByCategoryId(@PathVariable("categoryId") Long categoryId) {
     return storeService.getAllStoresByCategoryId(categoryId);
   }
