@@ -2,6 +2,7 @@ package com.sparta.aiverification.user.security;
 
 import com.sparta.aiverification.user.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,22 +34,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         //순수 토큰 가져오기
         String tokenValue = jwtUtil.getJwtFromHeader(req);
-        //log.info("순수 토큰 :{}", tokenValue);
-
 
         if (StringUtils.hasText(tokenValue)) {
-
-            if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
-                return;
-            }
-
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
             try {
+                if (!jwtUtil.validateToken(tokenValue)) {
+                    res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+
+                Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
                 setAuthentication(info.getSubject());
-            } catch (Exception e) {
-                log.error(e.getMessage());
+            } catch (JwtException e) {
+                log.error("JWT Token Error: {}", e.getMessage());
+                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
         }
@@ -71,4 +69,5 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
+
 }
