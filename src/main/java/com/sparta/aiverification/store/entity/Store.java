@@ -61,7 +61,7 @@ public class Store extends Timestamped {
   private String description;
 
   @Column(nullable = false)
-  private Boolean status = false;
+  private Boolean status;
 
 
   // Cascade.PERSIST : 영속성 전이 : 영속 상태의 작업들이 연관된 엔티티들까지 전파
