@@ -18,4 +18,6 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
   Page<Store> findAllByStatus(Boolean status, Pageable pageable);
   Page<Store> findAllByCategoryAndStatus(Long categoryId, boolean b, Pageable pageable);
   Page<Store> findAllByRegionAndStatus(Long regionId, boolean b, Pageable pageable);
+
+  Store findByMenuId(UUID menuId);
 }
