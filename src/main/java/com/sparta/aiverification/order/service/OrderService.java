@@ -1,20 +1,17 @@
 package com.sparta.aiverification.order.service;
 
-import com.sparta.aiverification.common.ErrorCode;
 import com.sparta.aiverification.common.RestApiException;
+import com.sparta.aiverification.menu.service.MenuService;
 import com.sparta.aiverification.order.dto.OrderErrorCode;
 import com.sparta.aiverification.order.dto.OrderRequestDto;
 import com.sparta.aiverification.order.dto.OrderResponseDto;
 import com.sparta.aiverification.order.entity.Order;
 import com.sparta.aiverification.order.repository.OrderRepository;
 import com.sparta.aiverification.ordermenu.dto.OrderMenuRequestDto;
-import com.sparta.aiverification.ordermenu.dto.OrderMenuResponseDto;
 import com.sparta.aiverification.ordermenu.entity.OrderMenu;
-import com.sparta.aiverification.tmp.entity.Menu;
-import com.sparta.aiverification.tmp.entity.Store;
+import com.sparta.aiverification.store.entity.Store;
+import com.sparta.aiverification.store.service.StoreService;
 import com.sparta.aiverification.user.entity.User;
-import com.sparta.aiverification.tmp.service.MenuService;
-import com.sparta.aiverification.tmp.service.StoreService;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
 import com.sparta.aiverification.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +33,8 @@ public class OrderService {
     private final MenuService menuService;
 
     private final OrderRepository orderRepository;
+
+
 
 
     @Transactional
@@ -128,6 +127,9 @@ public class OrderService {
         return OrderResponseDto.DeleteResponseDto.of(order);
     }
 
+    public Order findById(UUID orderId){
+        return orderRepository.findById(orderId).orElseThrow(() -> new RestApiException(OrderErrorCode.NOT_FOUND_ORDER));
+    }
 
     private Order createEmptyOrder(User user, Store store, String detail) {
         List<OrderMenu> orderMenuList = new ArrayList<>();
@@ -138,10 +140,6 @@ public class OrderService {
                 .detail(detail)
                 .status(true)
                 .build();
-    }
-
-    private Order findById(UUID orderId){
-        return orderRepository.findById(orderId).orElseThrow(() -> new RestApiException(OrderErrorCode.NOT_FOUND_ORDER));
     }
 
 }

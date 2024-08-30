@@ -1,6 +1,5 @@
 package com.sparta.aiverification.order.dto;
 
-import com.sparta.aiverification.common.Timestamped;
 import com.sparta.aiverification.order.entity.Order;
 import com.sparta.aiverification.ordermenu.dto.OrderMenuResponseDto;
 import lombok.AllArgsConstructor;

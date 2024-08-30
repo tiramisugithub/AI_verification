@@ -1,16 +1,15 @@
 package com.sparta.aiverification.order.entity;
 
 
-import com.sparta.aiverification.common.Timestamped;
+import com.sparta.aiverification.Timestamped;
 import com.sparta.aiverification.ordermenu.entity.OrderMenu;
-import com.sparta.aiverification.tmp.entity.Store;
+import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.ArrayList;
 import java.util.List;
