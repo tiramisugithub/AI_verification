@@ -8,11 +8,13 @@ import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.store.repository.StoreRepository;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,25 +63,32 @@ public class MenuService {
   }
 
   // 2. 메뉴 목록 조회
-  public List<MenuResponseDto> getAllMenus() {
-    List<Menu> menus = menuRepository.findAll();
-
-    List<MenuResponseDto> menuResponseDtoList = new ArrayList<>();
-    for (Menu menu : menus) {
-      menuResponseDtoList.add(new MenuResponseDto(menu));
+  public Page<MenuResponseDto> getAllMenus(int page, int size, String sortBy, boolean isAsc, User user) {
+    if (user.getRole() != UserRoleEnum.MANAGER && user.getRole() != UserRoleEnum.MASTER) {
+     throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
     }
-    return menuResponseDtoList;
+
+    Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+    Sort sort = Sort.by(direction, sortBy);
+
+    // 페이징 처리
+    Pageable pageable = PageRequest.of(page, size, sort);
+    Page<Menu> menuList = menuRepository.findAll(pageable);
+
+    return menuList.map(MenuResponseDto::new);
   }
 
-  public List<MenuResponseDto> getMenusByStoreId(UUID storeId) {
-    List<Menu> menus = menuRepository.findByStoreId(storeId);
+  public Page<MenuResponseDto> getMenusByStoreId(UUID storeId, int page, int size, String sortBy,
+      boolean isAsc, User user) {
+    // 페이징 처리
+    Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+    Sort sort = Sort.by(direction, sortBy);
+    Pageable pageable =  PageRequest.of(page, size, sort);    Page<Store> storeList;
 
-    List<MenuResponseDto> menuResponseDtoList = new ArrayList<>();
-    for (Menu menu : menus) {
-      menuResponseDtoList.add(new MenuResponseDto(menu));
-    }
+    // 모두 조회 가능
+    Page<Menu> menuList = menuRepository.findByStoreId(storeId, pageable);
 
-    return menuResponseDtoList;
+    return menuList.map(MenuResponseDto::new);
   }
 
   // 3. 메뉴 정보 조회
