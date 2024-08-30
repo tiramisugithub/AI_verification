@@ -33,6 +33,7 @@ public class Category extends Timestamped {
   @Column(nullable = false)
   private String name;
 
+  @Builder.Default
   @OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST)
   private List<Store> storeList = new ArrayList<>();
 

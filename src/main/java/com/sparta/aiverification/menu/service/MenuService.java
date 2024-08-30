@@ -6,6 +6,8 @@ import com.sparta.aiverification.menu.entity.Menu;
 import com.sparta.aiverification.menu.repository.MenuRepository;
 import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.store.repository.StoreRepository;
+import com.sparta.aiverification.user.entity.User;
+import com.sparta.aiverification.user.enums.UserRoleEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,17 +24,31 @@ public class MenuService {
   private final MenuRepository menuRepository;
   private final StoreRepository storeRepository;
 
+  private static void userValidate(User user) {
+    // validation
+    if (user.getRole() == UserRoleEnum.CUSTOMER) {
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+    }
+  }
+
   // 1. 메뉴 생성
   @Transactional
-  public MenuResponseDto createMenu(MenuRequestDto menuRequestDto) {
+  public MenuResponseDto createMenu(MenuRequestDto menuRequestDto, User user) {
+    // validation
+    userValidate(user);
+
     Store store = storeRepository.findById(menuRequestDto.getStoreId())
         .orElseThrow(() -> new RuntimeException("Store not found"));
+
+    // 헤딩 가게 주인인지 확인
+    if(user.getRole() == UserRoleEnum.OWNER && user.getId() != store.getUserId() ){
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+    }
 
     Menu menu = Menu.builder()
         .name(menuRequestDto.getName())
         .price(menuRequestDto.getPrice())
         .description(menuRequestDto.getDescription())
-//        .status(menuRequestDto.getStatus())
         .status(true)
         .store(store)
         .build();
@@ -75,7 +91,18 @@ public class MenuService {
 
   // 4. 메뉴 수정
   @Transactional
-  public MenuResponseDto updateMenu(UUID menuId, MenuRequestDto menuRequestDto) {
+  public MenuResponseDto updateMenu(UUID menuId, User user, MenuRequestDto menuRequestDto) {
+    // validation
+    userValidate(user);
+
+    Store store = storeRepository.findById(menuRequestDto.getStoreId())
+        .orElseThrow(() -> new RuntimeException("Store not found"));
+
+    // 헤딩 가게 주인인지 확인
+    if(user.getRole() == UserRoleEnum.OWNER && user.getId() != store.getUserId() ){
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+    }
+
     Menu menu = menuRepository.findById(menuId)
         .orElseThrow(() -> new RuntimeException("Menu not found"));
 
@@ -85,10 +112,14 @@ public class MenuService {
 
   // 5. 메뉴 삭제
   @Transactional
-  public void deleteMenu(UUID menuId) {
+  public void deleteMenu(UUID menuId, User user) {
+    // validation
+    userValidate(user);
+
     Menu menu = menuRepository.findById(menuId)
         .orElseThrow(() -> new RuntimeException("Menu not found"));
 
+    menu.delete(user.getId());
     menu.setStatusFalse();
   }
 }

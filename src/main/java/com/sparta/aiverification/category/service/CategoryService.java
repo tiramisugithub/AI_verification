@@ -4,6 +4,8 @@ import com.sparta.aiverification.category.dto.CategoryRequestDto;
 import com.sparta.aiverification.category.dto.CategoryResponseDto;
 import com.sparta.aiverification.category.entity.Category;
 import com.sparta.aiverification.category.repository.CategoryRepository;
+import com.sparta.aiverification.user.entity.User;
+import com.sparta.aiverification.user.enums.UserRoleEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,10 +19,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CategoryService {
 
+  private static void userValidate(User user) {
+    // validation
+    if (user.getRole() != UserRoleEnum.MASTER && user.getRole() != UserRoleEnum.MANAGER) {
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+    }
+  }
+
   private final CategoryRepository categoryRepository;
 
   @Transactional
-  public CategoryResponseDto createCategory(CategoryRequestDto categoryRequestDto) {
+  public CategoryResponseDto createCategory(User user, CategoryRequestDto categoryRequestDto) {
+    // validation
+    userValidate(user);
+
     Category category = Category.builder().name(categoryRequestDto.getCategoryName()).build();
     categoryRepository.save(category);
     return new CategoryResponseDto(category);
@@ -41,16 +53,22 @@ public class CategoryService {
   }
 
   @Transactional
-  public CategoryResponseDto updateCategory(Long categoryId, CategoryRequestDto categoryRequestDto) {
+  public CategoryResponseDto updateCategory(Long categoryId, User user, CategoryRequestDto categoryRequestDto) {
+    // validation
+    userValidate(user);
+
     Category category = categoryRepository.findById(categoryId).orElseThrow(NoSuchElementException::new);
     category.update(categoryRequestDto.getCategoryName());
     return new CategoryResponseDto(category);
   }
 
   @Transactional
-  public void deleteCategory(Long categoryId) {
+  public void deleteCategory(Long categoryId, User user) {
+    // validation
+    userValidate(user);
+
     Category category = categoryRepository.findById(categoryId).orElseThrow(NoSuchElementException::new);
     categoryRepository.deleteById(categoryId);
-    // category.delete("username");
+    category.delete(user.getId());
   }
 }

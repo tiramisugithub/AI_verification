@@ -5,10 +5,12 @@ import com.sparta.aiverification.menu.service.MenuService;
 import com.sparta.aiverification.store.dto.StoreRequestDto;
 import com.sparta.aiverification.store.dto.StoreResponseDto;
 import com.sparta.aiverification.store.service.StoreService;
+import com.sparta.aiverification.user.security.UserDetailsImpl;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +34,8 @@ public class StoreController {
   }
   // 0. 가게 생성
   @PostMapping
-  public StoreResponseDto createStore(@RequestBody StoreRequestDto storeRequestDto) {
-    return storeService.createStore(storeRequestDto);
+  public StoreResponseDto createStore(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody StoreRequestDto storeRequestDto) {
+    return storeService.createStore(userDetailsImpl.getUser(), storeRequestDto);
   }
 
   // 1.1 가게 목록 조회
@@ -68,14 +70,14 @@ public class StoreController {
 
   // 4. 가게 정보 수정
   @PutMapping("/{storeId}")
-  public StoreResponseDto updateStore(@PathVariable("storeId") UUID storeId, @RequestBody StoreRequestDto storeRequestDto) {
-    return storeService.updateStore(storeId, storeRequestDto);
+  public StoreResponseDto updateStore(@PathVariable("storeId") UUID storeId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody StoreRequestDto storeRequestDto) {
+    return storeService.updateStore(storeId, userDetailsImpl.getUser(), storeRequestDto);
   }
 
   // 5. 가게 정보 삭제
   @DeleteMapping("/{storeId}")
-  public ResponseEntity<String> deleteStore(@PathVariable("storeId") UUID storeId) {
-    storeService.deleteStoreAndMenus(storeId);
+  public ResponseEntity<String> deleteStore(@PathVariable("storeId") UUID storeId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    storeService.deleteStoreAndMenus(storeId, userDetailsImpl.getUser());
     return ResponseEntity.ok("Store and its menus deleted successfully.");
   }
 }
