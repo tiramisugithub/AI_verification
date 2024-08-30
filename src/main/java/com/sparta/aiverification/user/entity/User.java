@@ -1,6 +1,7 @@
 package com.sparta.aiverification.user.entity;
 
 
+import com.sparta.aiverification.Timestamped;
 import com.sparta.aiverification.user.dto.UserRequestDto;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class User {
+public class User extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +41,7 @@ public class User {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
+
 
     public void updateInfo(UserRequestDto userRequestDto) {
         if(userRequestDto.getUsername() != null & !userRequestDto.getUsername().isBlank()){
