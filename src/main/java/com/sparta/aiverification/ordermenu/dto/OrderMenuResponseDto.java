@@ -1,6 +1,7 @@
 package com.sparta.aiverification.ordermenu.dto;
 
 import com.sparta.aiverification.ordermenu.entity.OrderMenu;
+import com.sparta.aiverification.ordermenu.entity.OrderMenuRedis;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,4 +31,21 @@ public class OrderMenuResponseDto {
                     .build();
         }
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static public class SimpleResponseDto {
+        private UUID menuId;
+        private Integer quantity;
+
+        public static SimpleResponseDto of(OrderMenuRedis orderMenuRedis){
+            return SimpleResponseDto.builder()
+                    .menuId(orderMenuRedis.getMenuId())
+                    .quantity(orderMenuRedis.getQuantity())
+                    .build();
+        }
+    }
+
 }

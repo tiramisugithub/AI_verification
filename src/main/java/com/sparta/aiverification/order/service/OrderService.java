@@ -1,6 +1,7 @@
 package com.sparta.aiverification.order.service;
 
 import com.sparta.aiverification.common.RestApiException;
+import com.sparta.aiverification.menu.entity.Menu;
 import com.sparta.aiverification.menu.service.MenuService;
 import com.sparta.aiverification.order.dto.OrderErrorCode;
 import com.sparta.aiverification.order.dto.OrderRequestDto;
@@ -47,7 +48,7 @@ public class OrderService {
                 , requestDto.getDetail()
         );
         Integer totalPrice = 0;
-        for(OrderMenuRequestDto.CreateRequestDto createRequestDto : requestDto.getMenuList()){
+        for(OrderMenuRequestDto createRequestDto : requestDto.getMenuList()){
             Menu menu = menuService.findById(createRequestDto.getMenuId());
             totalPrice += menu.getPrice() * createRequestDto.getQuantity();
             order.addOrderMenu(OrderMenu.builder()

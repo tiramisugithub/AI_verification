@@ -19,7 +19,7 @@ public class OrderRequestDto {
 
         private UUID storeId;
 
-        private List<OrderMenuRequestDto.CreateRequestDto> menuList;
+        private List<OrderMenuRequestDto> menuList;
 
         private String detail;
 
