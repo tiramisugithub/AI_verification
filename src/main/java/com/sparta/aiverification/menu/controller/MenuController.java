@@ -49,21 +49,32 @@ public class MenuController{
 
   // 3. 메뉴 정보 조회
   @GetMapping("/{menuId}")
-  public MenuResponseDto getMenuById(@PathVariable UUID menuId,
+  public MenuResponseDto getMenuById(@PathVariable("menuId") UUID menuId,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
     return menuService.getMenuById(menuId, userDetails.getUser());
   }
 
   // 4. 메뉴 수정
   @PutMapping("/{menuId}")
-  public MenuResponseDto updateMenu(@PathVariable UUID menuId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody MenuRequestDto menuRequestDto) {
+  public MenuResponseDto updateMenu(@PathVariable("menuId") UUID menuId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody MenuRequestDto menuRequestDto) {
     return menuService.updateMenu(menuId, userDetailsImpl.getUser(), menuRequestDto);
   }
 
   // 5. 메뉴 삭제
   @DeleteMapping("/{menuId}")
-  public ResponseEntity<String> deleteMenu(@PathVariable UUID menuId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+  public ResponseEntity<String> deleteMenu(@PathVariable("menuId") UUID menuId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
     menuService.deleteMenu(menuId, userDetailsImpl.getUser());
     return ResponseEntity.ok("Menu deleted successfully.");
   }
+
+  // 6. 메뉴-설명 인공지능 요청
+  @PostMapping("/generate-description/{menuId}")
+  public ResponseEntity<String> generatMenuDescription(@PathVariable("menuId") UUID menuId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    // AI 설명 생성 및 DB 저장
+    menuService.generatMenuDescription(menuId, userDetailsImpl.getUser());
+
+    // 응답 반환
+    return ResponseEntity.ok("Description generated and saved successfully.");
+  }
+
 }
