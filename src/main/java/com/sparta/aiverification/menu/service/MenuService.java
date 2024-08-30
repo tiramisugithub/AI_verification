@@ -26,7 +26,7 @@ public class MenuService {
   private final MenuRepository menuRepository;
   private final StoreRepository storeRepository;
 
-  private static void userValidate(User user) {
+  private static void isNotCustomer(User user) {
     // validation
     if (user.getRole() == UserRoleEnum.CUSTOMER) {
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
@@ -37,7 +37,7 @@ public class MenuService {
   @Transactional
   public MenuResponseDto createMenu(MenuRequestDto menuRequestDto, User user) {
     // validation
-    userValidate(user);
+    isNotCustomer(user);
 
     Store store = storeRepository.findById(menuRequestDto.getStoreId())
         .orElseThrow(() -> new RuntimeException("Store not found"));
@@ -111,7 +111,7 @@ public class MenuService {
   @Transactional
   public MenuResponseDto updateMenu(UUID menuId, User user, MenuRequestDto menuRequestDto) {
     // validation
-    userValidate(user);
+    isNotCustomer(user);
 
     Store store = storeRepository.findById(menuRequestDto.getStoreId())
         .orElseThrow(() -> new RuntimeException("Store not found"));
@@ -132,7 +132,7 @@ public class MenuService {
   @Transactional
   public void deleteMenu(UUID menuId, User user) {
     // validation
-    userValidate(user);
+    isNotCustomer(user);
 
     Menu menu = menuRepository.findById(menuId)
         .orElseThrow(() -> new RuntimeException("Menu not found"));
