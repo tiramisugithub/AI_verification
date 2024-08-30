@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AIRepository extends JpaRepository<AI, Long> {
 
-  Page<AI> findAllByMenu(UUID menuId, Pageable pageable);
+  Page<AI> findAIByMenuId(UUID menuId, Pageable pageable);
 
 }

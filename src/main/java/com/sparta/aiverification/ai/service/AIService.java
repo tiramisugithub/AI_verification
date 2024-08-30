@@ -75,16 +75,16 @@ public class AIService {
     Sort sort = Sort.by(direction, sortBy);
     Pageable pageable =  PageRequest.of(page, size, sort);
 
-    Page<AI> aiList;
+    Page<AI> ai;
 
     // OWNER : 특정 가게 목록만 조회
     if(user.getRole() == UserRoleEnum.OWNER){
-      aiList = aiRepository.findAllByMenu(menuId, pageable);
+      ai = aiRepository.findAIByMenuId(menuId, pageable);
     }
     else{
-      aiList = aiRepository.findAll(pageable);
+      ai = aiRepository.findAll(pageable);
     }
-    return aiList.map(AIResponseDto::new);
+    return ai.map(AIResponseDto::new);
   }
 
   public AIResponseDto getAI(Long aiId, User user) {

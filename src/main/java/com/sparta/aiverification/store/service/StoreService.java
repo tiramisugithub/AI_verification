@@ -87,7 +87,7 @@ public class StoreService {
 
     // OWNER : 본인 가게 목록만 조회
     if(user.getRole() == UserRoleEnum.OWNER){
-      storeList = storeRepository.findAllByUser(user, pageable);
+      storeList = storeRepository.findAllByUserId(user.getId(), pageable);
     }
     // CUSTOMER :  status가 true인 값만 조회
     else if(user.getRole() == UserRoleEnum.CUSTOMER) {
@@ -109,7 +109,7 @@ public class StoreService {
 
     // OWNER : 본인 가게 목록만 조회
     if(user.getRole() == UserRoleEnum.OWNER){
-      storeList = storeRepository.findAllByUserAAndCategory(user, categoryId,pageable);
+      storeList = storeRepository.findAllByUserIdAndCategory(user.getId(), categoryId,pageable);
     }
     // CUSTOMER :  status가 true인 값만 조회
     else if(user.getRole() == UserRoleEnum.CUSTOMER) {
@@ -131,7 +131,7 @@ public class StoreService {
 
     // 사용자 권한이 OWNER 면 본인 가게 목록만 조회
     if (user.getRole() == UserRoleEnum.OWNER) {
-      storeList = storeRepository.findAllByUserAAndRegion(user, regionId, pageable);
+      storeList = storeRepository.findAllByUserIdAndRegion(user.getId(), regionId, pageable);
     }
     // CUSTOMER :  status가 true인 값만 조회
     else if(user.getRole() == UserRoleEnum.CUSTOMER) {
