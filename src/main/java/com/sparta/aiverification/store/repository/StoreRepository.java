@@ -15,4 +15,7 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
   Page<Store> findAllByUserAAndCategory(User user, Long categoryId, Pageable pageable);
   Page<Store> findAllByUserAAndRegion(User user, Long regionId, Pageable pageable);
 
+  Page<Store> findAllByStatus(Boolean status, Pageable pageable);
+  Page<Store> findAllByCategoryAndStatus(Long categoryId, boolean b, Pageable pageable);
+  Page<Store> findAllByRegionAndStatus(Long regionId, boolean b, Pageable pageable);
 }

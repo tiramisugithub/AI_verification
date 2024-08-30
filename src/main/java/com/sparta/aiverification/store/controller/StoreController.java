@@ -79,8 +79,8 @@ public class StoreController {
 
   // 2. 가게 정보 조회
   @GetMapping("/{storeId}")
-  public StoreResponseDto getStoreById(@PathVariable("storeId") UUID storeId) {
-    return storeService.getStoreById(storeId);
+  public StoreResponseDto getStoreById(@PathVariable("storeId") UUID storeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return storeService.getStoreById(storeId, userDetails.getUser());
   }
 
   // 3. 가게의 상품 목록 조회
