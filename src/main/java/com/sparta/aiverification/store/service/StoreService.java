@@ -2,9 +2,11 @@ package com.sparta.aiverification.store.service;
 
 import com.sparta.aiverification.category.entity.Category;
 import com.sparta.aiverification.category.repository.CategoryRepository;
+import com.sparta.aiverification.common.RestApiException;
 import com.sparta.aiverification.menu.repository.MenuRepository;
 import com.sparta.aiverification.region.entity.Region;
 import com.sparta.aiverification.region.repository.RegionRepository;
+import com.sparta.aiverification.store.dto.StoreErrorCode;
 import com.sparta.aiverification.store.dto.StoreRequestDto;
 import com.sparta.aiverification.store.dto.StoreResponseDto;
 import com.sparta.aiverification.store.entity.Store;
@@ -187,4 +189,11 @@ public class StoreService {
       store.delete(user.getId());
      store.setStatusFalse();;
   }
+
+
+  public Store findById(UUID storeId){
+    return storeRepository.findById(storeId).orElseThrow(()
+        -> new RestApiException(StoreErrorCode.NOT_FOUND_STORE));
+  }
+
 }

@@ -3,6 +3,8 @@ package com.sparta.aiverification.menu.service;
 import com.sparta.aiverification.ai.dto.AIRequestDto;
 import com.sparta.aiverification.ai.dto.AIResponseDto;
 import com.sparta.aiverification.ai.service.AIService;
+import com.sparta.aiverification.common.RestApiException;
+import com.sparta.aiverification.menu.dto.MenuErrorCode;
 import com.sparta.aiverification.menu.dto.MenuRequestDto;
 import com.sparta.aiverification.menu.dto.MenuResponseDto;
 import com.sparta.aiverification.menu.entity.Menu;
@@ -206,5 +208,10 @@ public class MenuService {
       throw new RuntimeException("AI API 호출에 실패했습니다: " + ex.getMessage(), ex);
     }
 
+  }
+
+  public Menu findById(UUID menuId) {
+    return menuRepository.findById(menuId).orElseThrow(()
+        -> new RestApiException(MenuErrorCode.NOT_FOUND_MENU));
   }
 }
