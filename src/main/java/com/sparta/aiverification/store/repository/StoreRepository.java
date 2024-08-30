@@ -2,6 +2,7 @@ package com.sparta.aiverification.store.repository;
 
 import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.user.entity.User;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,5 +20,5 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
   Page<Store> findAllByCategoryAndStatus(Long categoryId, boolean b, Pageable pageable);
   Page<Store> findAllByRegionAndStatus(Long regionId, boolean b, Pageable pageable);
 
-  Store findByMenuId(UUID menuId);
+  Optional<Store> findByMenuId(UUID menuId);
 }
