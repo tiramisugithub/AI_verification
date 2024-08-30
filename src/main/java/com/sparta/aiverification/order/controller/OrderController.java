@@ -25,7 +25,7 @@ public class OrderController {
     public RestApiResponse<OrderResponseDto.CreateResponseDto> createOrder(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody OrderRequestDto.CreateRequestDto requestDto) {
-        return RestApiResponse.success(orderService.createOrder(userDetails.getUser(), requestDto));
+        return RestApiResponse.success(null);
     }
 
     @GetMapping("/{orderId}")

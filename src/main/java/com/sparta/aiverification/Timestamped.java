@@ -32,7 +32,7 @@ public abstract class Timestamped {
   private LocalDateTime updatedAt;
 
   @LastModifiedBy
-  @Column()
+  @Column(updatable = false)
   private Long updatedBy;
 
 
