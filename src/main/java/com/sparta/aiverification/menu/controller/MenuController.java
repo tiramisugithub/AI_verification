@@ -71,7 +71,7 @@ public class MenuController{
   @PostMapping("/generate-description/{menuId}")
   public ResponseEntity<String> generatMenuDescription(@PathVariable("menuId") UUID menuId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
     // AI 설명 생성 및 DB 저장
-    menuService.generatMenuDescription(menuId, userDetailsImpl.getUser());
+//    menuService.generatMenuDescription(menuId, userDetailsImpl.getUser());
 
     // 응답 반환
     return ResponseEntity.ok("Description generated and saved successfully.");

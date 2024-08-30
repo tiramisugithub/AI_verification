@@ -1,7 +1,5 @@
 package com.sparta.aiverification.menu.service;
 
-import com.sparta.aiverification.ai.dto.AIRequestDto;
-import com.sparta.aiverification.ai.dto.AIResponseDto;
 import com.sparta.aiverification.ai.service.AIService;
 import com.sparta.aiverification.common.RestApiException;
 import com.sparta.aiverification.menu.dto.MenuErrorCode;
@@ -13,9 +11,6 @@ import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.store.repository.StoreRepository;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,15 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @AllArgsConstructor
@@ -44,8 +32,8 @@ public class MenuService {
   @Autowired
   private final AIService aiService;
 
-  @Autowired
-  private RestTemplate restTemplate;
+//  @Autowired
+//  private RestTemplate restTemplate;
 
   private static void isNotCustomer(User user) {
     // validation
@@ -162,6 +150,7 @@ public class MenuService {
     menu.setStatusFalse();
   }
 
+  /*
   @Transactional
   public void generatMenuDescription(UUID menuId, User user) {
     String aiApiKey = "AIzaSyB-3yiStYB6Dcr8o_eOVaZ3tGTt79Qbg08";
@@ -209,7 +198,7 @@ public class MenuService {
     }
 
   }
-
+*/
   public Menu findById(UUID menuId) {
     return menuRepository.findById(menuId).orElseThrow(()
         -> new RestApiException(MenuErrorCode.NOT_FOUND_MENU));
