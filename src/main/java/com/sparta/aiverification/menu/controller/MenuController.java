@@ -49,8 +49,9 @@ public class MenuController{
 
   // 3. 메뉴 정보 조회
   @GetMapping("/{menuId}")
-  public MenuResponseDto getMenuById(@PathVariable UUID menuId) {
-    return menuService.getMenuById(menuId);
+  public MenuResponseDto getMenuById(@PathVariable UUID menuId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return menuService.getMenuById(menuId, userDetails.getUser());
   }
 
   // 4. 메뉴 수정

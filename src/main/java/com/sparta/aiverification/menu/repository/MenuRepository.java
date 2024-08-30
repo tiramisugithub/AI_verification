@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MenuRepository extends JpaRepository<Menu, UUID> {
-//  List<Menu> findByName(String menuName);
-  Page<Menu> findByStoreId(UUID storeId, Pageable pageable);
-
+  //  List<Menu> findByName(String menuName);
+  Page<Menu> findMenusByStoreAndStatus(UUID storeId, Boolean status, Pageable pageable);
+  Page<Menu> findMenusByStore(UUID storeId, Pageable pageable);
 }
