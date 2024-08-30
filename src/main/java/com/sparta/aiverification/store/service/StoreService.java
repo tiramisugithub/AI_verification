@@ -11,12 +11,14 @@ import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.store.repository.StoreRepository;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,12 @@ public class StoreService {
   private final MenuRepository menuRepository;
   private final RegionRepository regionRepository;
   private final CategoryRepository categoryRepository;
+
+  private Pageable getPageable(boolean isAsc, int page, int size, String sortBy) {
+    Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+    Sort sort = Sort.by(direction, sortBy);
+    return PageRequest.of(page, size, sort);
+  }
 
   private static void userValidate(User user) {
     // validation
@@ -67,36 +75,55 @@ public class StoreService {
   }
 
   // 1.1 가게 목록 조회
-  public List<StoreResponseDto> getAllStores() {
-    List<Store> stores = storeRepository.findAll();
+  public Page<StoreResponseDto> getAllStores(int page, int size, String sortBy, boolean isAsc,
+      User user) {
 
-    List<StoreResponseDto> storeResponseDtoList = new ArrayList<>();
-    for (Store store : stores) {
-      storeResponseDtoList.add(new StoreResponseDto(store));
+    // 페이징 처리
+    Pageable pageable = getPageable(isAsc, page,size, sortBy);
+    Page<Store> storeList;
+
+    // 사용자 권한이 OWNER 면 본인 가게 목록만 조회
+    if(user.getRole() == UserRoleEnum.OWNER){
+      storeList = storeRepository.findAllByUser(user, pageable);
+    }else{
+      storeList = storeRepository.findAll(pageable);
     }
-    return storeResponseDtoList;
+
+    return storeList.map(StoreResponseDto::new);
   }
 
   // 1.2 카테고리 별 가게 목록 조회
-  public List<StoreResponseDto> getAllStoresByCategoryId(Long categoryId) {
-    List<Store> stores = storeRepository.findAllByCategoryId(categoryId);
+  public Page<StoreResponseDto> getAllStoresByCategoryId(Long categoryId, int page, int size,
+      String sortBy, boolean isAsc, User user) {
+    // 페이징 처리
+    Pageable pageable = getPageable(isAsc, page,size, sortBy);
+    Page<Store> storeList;
 
-    List<StoreResponseDto> storeResponseDtoList = new ArrayList<>();
-    for (Store store : stores) {
-      storeResponseDtoList.add(new StoreResponseDto(store));
+    // 사용자 권한이 OWNER 면 본인 가게 목록만 조회
+    if(user.getRole() == UserRoleEnum.OWNER){
+      storeList = storeRepository.findAllByUserAAndCategory(user, categoryId,pageable);
+    }else{
+      storeList = storeRepository.findAllByCategoryId(categoryId, pageable);
     }
-    return storeResponseDtoList;
+
+    return storeList.map(StoreResponseDto::new);
   }
 
   // 1.3 지역별 별 가게 목록 조회
-  public List<StoreResponseDto> getAllStoresByRegionId(Long regionId) {
-    List<Store> stores = storeRepository.findAllByRegionId(regionId);
+  public Page<StoreResponseDto> getAllStoresByRegionId(Long regionId, int page, int size,
+      String sortBy, boolean isAsc, User user) {
+    // 페이징 처리
+    Pageable pageable = getPageable(isAsc, page,size, sortBy);
+    Page<Store> storeList;
 
-    List<StoreResponseDto> storeResponseDtoList = new ArrayList<>();
-    for (Store store : stores) {
-      storeResponseDtoList.add(new StoreResponseDto(store));
+    // 사용자 권한이 OWNER 면 본인 가게 목록만 조회
+    if (user.getRole() == UserRoleEnum.OWNER) {
+      storeList = storeRepository.findAllByUserAAndRegion(user, regionId, pageable);
+    } else {
+      storeList = storeRepository.findAllByRegionId(regionId, pageable);
     }
-    return storeResponseDtoList;
+
+    return storeList.map(StoreResponseDto::new);
   }
 
   // 2. 가게 정보 조회
