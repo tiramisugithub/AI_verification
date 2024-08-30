@@ -11,12 +11,14 @@ import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.store.repository.StoreRepository;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,17 +32,24 @@ public class StoreService {
   private final RegionRepository regionRepository;
   private final CategoryRepository categoryRepository;
 
-  private static void userValidate(User user) {
+  private Pageable getPageable(boolean isAsc, int page, int size, String sortBy) {
+    Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+    Sort sort = Sort.by(direction, sortBy);
+    return PageRequest.of(page, size, sort);
+  }
+
+  private static void isNotCustomer(User user) {
     // validation
     if (user.getRole() == UserRoleEnum.CUSTOMER) {
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
     }
   }
 
+  // 0. 가게 생성 - OWNER, MANAGER, MASTER
   @Transactional
   public StoreResponseDto createStore(User user, StoreRequestDto storeRequestDto) {
     // validation
-    userValidate(user);
+    isNotCustomer(user);
 
     Region region = regionRepository.findById(storeRequestDto.getRegionId())
         .orElseThrow(() -> new NoSuchElementException("Region with ID " + storeRequestDto.getRegionId() + " not found"));
@@ -50,7 +59,7 @@ public class StoreService {
 
     // execute
     Store store = Store.builder()
-        .userId(Long.valueOf(1))
+        .userId(user.getId())
         .region(region)
         .category(category)
         .address(storeRequestDto.getAddress())
@@ -66,43 +75,82 @@ public class StoreService {
     return new StoreResponseDto(store);
   }
 
-  // 1.1 가게 목록 조회
-  public List<StoreResponseDto> getAllStores() {
-    List<Store> stores = storeRepository.findAll();
+  // 1.1 가게 목록 조회 - CUSTOMER, OWNER, MANAGER, MASTER
+  public Page<StoreResponseDto> getAllStores(int page, int size, String sortBy, boolean isAsc,
+      User user) {
 
-    List<StoreResponseDto> storeResponseDtoList = new ArrayList<>();
-    for (Store store : stores) {
-      storeResponseDtoList.add(new StoreResponseDto(store));
+    // 페이징 처리
+    Pageable pageable = getPageable(isAsc, page,size, sortBy);
+    Page<Store> storeList;
+
+    // OWNER : 본인 가게 목록만 조회
+    if(user.getRole() == UserRoleEnum.OWNER){
+      storeList = storeRepository.findAllByUser(user, pageable);
     }
-    return storeResponseDtoList;
+    // CUSTOMER :  status가 true인 값만 조회
+    else if(user.getRole() == UserRoleEnum.CUSTOMER) {
+      storeList = storeRepository.findAllByStatus(true, pageable);
+    }else {
+        storeList = storeRepository.findAll(pageable);
+    }
+
+
+    return storeList.map(StoreResponseDto::new);
   }
 
-  // 1.2 카테고리 별 가게 목록 조회
-  public List<StoreResponseDto> getAllStoresByCategoryId(Long categoryId) {
-    List<Store> stores = storeRepository.findAllByCategoryId(categoryId);
+  // 1.2 카테고리 별 가게 목록 조회 - CUSTOMER, OWNER, MANAGER, MASTER
+  public Page<StoreResponseDto> getAllStoresByCategoryId(Long categoryId, int page, int size,
+      String sortBy, boolean isAsc, User user) {
+    // 페이징 처리
+    Pageable pageable = getPageable(isAsc, page,size, sortBy);
+    Page<Store> storeList;
 
-    List<StoreResponseDto> storeResponseDtoList = new ArrayList<>();
-    for (Store store : stores) {
-      storeResponseDtoList.add(new StoreResponseDto(store));
+    // OWNER : 본인 가게 목록만 조회
+    if(user.getRole() == UserRoleEnum.OWNER){
+      storeList = storeRepository.findAllByUserAAndCategory(user, categoryId,pageable);
     }
-    return storeResponseDtoList;
+    // CUSTOMER :  status가 true인 값만 조회
+    else if(user.getRole() == UserRoleEnum.CUSTOMER) {
+      storeList = storeRepository.findAllByCategoryAndStatus(categoryId, true, pageable);
+    }
+    else{
+      storeList = storeRepository.findAllByCategoryId(categoryId, pageable);
+    }
+
+    return storeList.map(StoreResponseDto::new);
   }
 
-  // 1.3 지역별 별 가게 목록 조회
-  public List<StoreResponseDto> getAllStoresByRegionId(Long regionId) {
-    List<Store> stores = storeRepository.findAllByRegionId(regionId);
+  // 1.3 지역별 별 가게 목록 조회 - CUSTOMER, OWNER, MANAGER, MASTER
+  public Page<StoreResponseDto> getAllStoresByRegionId(Long regionId, int page, int size,
+      String sortBy, boolean isAsc, User user) {
+    // 페이징 처리
+    Pageable pageable = getPageable(isAsc, page,size, sortBy);
+    Page<Store> storeList;
 
-    List<StoreResponseDto> storeResponseDtoList = new ArrayList<>();
-    for (Store store : stores) {
-      storeResponseDtoList.add(new StoreResponseDto(store));
+    // 사용자 권한이 OWNER 면 본인 가게 목록만 조회
+    if (user.getRole() == UserRoleEnum.OWNER) {
+      storeList = storeRepository.findAllByUserAAndRegion(user, regionId, pageable);
     }
-    return storeResponseDtoList;
+    // CUSTOMER :  status가 true인 값만 조회
+    else if(user.getRole() == UserRoleEnum.CUSTOMER) {
+      storeList = storeRepository.findAllByRegionAndStatus(regionId, true, pageable);
+    }
+    else {
+      storeList = storeRepository.findAllByRegionId(regionId, pageable);
+    }
+
+    return storeList.map(StoreResponseDto::new);
   }
 
-  // 2. 가게 정보 조회
-  public StoreResponseDto getStoreById(UUID storeId) {
+  // 2. 가게 정보 조회 - CUSTOMER, OWNER, MANAGER, MASTER
+  public StoreResponseDto getStoreById(UUID storeId, User user) {
     Store store = storeRepository.findById(storeId)
         .orElseThrow(() -> new RuntimeException("Store not found"));
+
+    if(user.getRole() == UserRoleEnum.CUSTOMER && store.getStatus() == false){
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+    }
+
     return new StoreResponseDto(store);
   }
 
@@ -110,7 +158,7 @@ public class StoreService {
   @Transactional
   public StoreResponseDto updateStore(UUID storeId, User user, StoreRequestDto storeRequestDto) {
     // validation
-    userValidate(user);
+    isNotCustomer(user);
 
     Region region = regionRepository.findById(storeRequestDto.getRegionId())
         .orElseThrow(() -> new NoSuchElementException("Region with ID " + storeRequestDto.getRegionId() + " not found"));
@@ -130,7 +178,7 @@ public class StoreService {
   @Transactional
   public void deleteStoreAndMenus(UUID storeId, User user) {
     // validation
-    userValidate(user);
+    isNotCustomer(user);
 
     // execute
     Store store = storeRepository.findById(storeId)

@@ -6,9 +6,9 @@ import com.sparta.aiverification.store.dto.StoreRequestDto;
 import com.sparta.aiverification.store.dto.StoreResponseDto;
 import com.sparta.aiverification.store.service.StoreService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,6 +33,7 @@ public class StoreController {
     this.storeService = storeService;
     this.menuService = menuService;
   }
+
   // 0. 가게 생성
   @PostMapping
   public StoreResponseDto createStore(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody StoreRequestDto storeRequestDto) {
@@ -40,32 +42,57 @@ public class StoreController {
 
   // 1.1 가게 목록 조회
   @GetMapping
-  public List<StoreResponseDto> getAllStores() {
-    return storeService.getAllStores();
+  public Page<StoreResponseDto> getAllStores(
+      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "size", defaultValue = "10") int size,
+      @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+      @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
+      @AuthenticationPrincipal UserDetailsImpl userDetails
+  ) {
+    return storeService.getAllStores(page-1, size, sortBy, isAsc, userDetails.getUser());
   }
 
   // 1.2 카테고리별 가게 목록 조회
   @GetMapping("/categories/{categoryId}")
-  public List<StoreResponseDto> getAllStoresByCategoryId(@PathVariable("categoryId") Long categoryId) {
-    return storeService.getAllStoresByCategoryId(categoryId);
+  public Page<StoreResponseDto> getAllStoresByCategoryId(
+      @PathVariable("categoryId") Long categoryId,
+      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "size", defaultValue = "10") int size,
+      @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+      @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return storeService.getAllStoresByCategoryId(categoryId, page-1, size, sortBy, isAsc, userDetails.getUser());
   }
 
   // 1.3 지역 별 가게 목록 조회
   @GetMapping("/regions/{regionId}")
-  public List<StoreResponseDto> getAllStoresByRegionId(@PathVariable("regionId") Long regionId) {
-    return storeService.getAllStoresByRegionId(regionId);
+  public Page<StoreResponseDto> getAllStoresByRegionId(
+      @PathVariable("regionId") Long regionId,
+      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "size", defaultValue = "10") int size,
+      @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+      @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
+      @AuthenticationPrincipal UserDetailsImpl userDetails
+  ) {
+    return storeService.getAllStoresByRegionId(regionId, page-1, size, sortBy, isAsc, userDetails.getUser());
   }
 
   // 2. 가게 정보 조회
   @GetMapping("/{storeId}")
-  public StoreResponseDto getStoreById(@PathVariable("storeId") UUID storeId) {
-    return storeService.getStoreById(storeId);
+  public StoreResponseDto getStoreById(@PathVariable("storeId") UUID storeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return storeService.getStoreById(storeId, userDetails.getUser());
   }
 
   // 3. 가게의 상품 목록 조회
   @GetMapping("/{storeId}/menus")
-  public List<MenuResponseDto> getMenusByStore(@PathVariable("storeId") UUID storeId) {
-    return menuService.getMenusByStoreId(storeId);
+  public Page<MenuResponseDto> getMenusByStore(
+      @PathVariable("storeId") UUID storeId,
+      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "size", defaultValue = "10") int size,
+      @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+      @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return menuService.getMenusByStoreId(storeId, page-1, size, sortBy, isAsc, userDetails.getUser());
   }
 
   // 4. 가게 정보 수정
