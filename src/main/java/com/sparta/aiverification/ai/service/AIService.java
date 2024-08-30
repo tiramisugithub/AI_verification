@@ -23,7 +23,7 @@ public class AIService {
   private final AIRepository aiRepository;
   private final MenuRepository menuRepository;
 
-  private static void userValidate(User user) {
+  private static void isNotCustomer(User user) {
     // validation
     if (user.getRole() == UserRoleEnum.CUSTOMER) {
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
@@ -33,7 +33,7 @@ public class AIService {
   @Transactional
   public AIResponseDto createAI(User user, AIRequestDto aiRequestDto) {
     // validation
-    userValidate(user);
+    isNotCustomer(user);
 
     Menu menu = menuRepository.findById(aiRequestDto.getMenuId())
         .orElseThrow(() -> new NoSuchElementException("Menu with ID " + aiRequestDto.getMenuId() + " not found"));
@@ -65,7 +65,7 @@ public class AIService {
   @Transactional
   public AIResponseDto updateAI(Long aiId, User user, AIRequestDto aiRequestDto) {
     // validation
-    userValidate(user);
+    isNotCustomer(user);
 
     AI ai = aiRepository.findById(aiId).orElseThrow(NoSuchElementException::new);
     ai.update(aiRequestDto);
@@ -74,7 +74,7 @@ public class AIService {
   @Transactional
   public void deleteAI(Long aiId, User user) {
     // validation
-    userValidate(user);
+    isNotCustomer(user);
 
     AI ai = aiRepository.findById(aiId).orElseThrow(NoSuchElementException::new);
      ai.delete(user.getId());

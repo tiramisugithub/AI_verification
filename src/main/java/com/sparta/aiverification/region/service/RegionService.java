@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegionService {
   private final RegionRepository regionRepository;
 
-  private static void userValidate(User user) {
+  private static void isAdmin(User user) {
     // validation
     if (user.getRole() != UserRoleEnum.MASTER && user.getRole() != UserRoleEnum.MANAGER) {
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
@@ -30,7 +30,7 @@ public class RegionService {
   @Transactional
   public RegionResponseDto createRegion(User user, RegionRequestDto regionRequestDto) {
     // validation
-    userValidate(user);
+    isAdmin(user);
 
     Region region = Region.builder().name(regionRequestDto.getRegionName()).build();
     regionRepository.save(region);
@@ -55,7 +55,7 @@ public class RegionService {
   @Transactional
   public RegionResponseDto updateRegion(Long regionId, User user, RegionRequestDto regionRequestDto) {
     // validation
-    userValidate(user);
+    isAdmin(user);
 
     Region region = regionRepository.findById(regionId).orElseThrow(NoSuchElementException::new);
     region.update(regionRequestDto.getRegionName());
@@ -65,7 +65,7 @@ public class RegionService {
   @Transactional
   public void deleteRegion(Long regionId, User user) {
     // validation
-    userValidate(user);
+    isAdmin(user);
 
     Region region = regionRepository.findById(regionId).orElseThrow(NoSuchElementException::new);
 
