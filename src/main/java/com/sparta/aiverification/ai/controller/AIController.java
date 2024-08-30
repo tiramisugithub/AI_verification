@@ -4,6 +4,7 @@ import com.sparta.aiverification.ai.dto.AIRequestDto;
 import com.sparta.aiverification.ai.dto.AIResponseDto;
 import com.sparta.aiverification.ai.service.AIService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ai")
 public class AIController {
 
-  private  final AIService aiService;
-
   @Autowired
-  public AIController(AIService aiService){
+  private final AIService aiService;
+
+  public AIController(AIService aiService) {
     this.aiService = aiService;
   }
 
@@ -36,14 +37,15 @@ public class AIController {
   }
 
   // 2. AI 목록 조회
-  @GetMapping
+  @GetMapping("/{menuId}")
   public Page<AIResponseDto> getAIList(
+      @PathVariable("menuId") UUID menuId,
       @RequestParam(value = "page", defaultValue = "0") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
       @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-    return aiService.getAIList(page - 1, size, sortBy, isAsc, userDetailsImpl.getUser());
+    return aiService.getAIList(menuId, page - 1, size, sortBy, isAsc, userDetailsImpl.getUser());
   }
 
   // 3. AI 정보 조회
