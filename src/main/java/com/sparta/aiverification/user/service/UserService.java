@@ -1,5 +1,7 @@
 package com.sparta.aiverification.user.service;
 
+import com.sparta.aiverification.common.RestApiException;
+import com.sparta.aiverification.order.dto.OrderErrorCode;
 import com.sparta.aiverification.user.dto.*;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
@@ -130,4 +132,10 @@ public class UserService {
         userRepository.delete(user);
         log.info("User with ID {} has been deleted", userId);
     }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RestApiException(OrderErrorCode.NOT_FOUND_ORDER));
+    }
+
 }
