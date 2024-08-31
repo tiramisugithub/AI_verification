@@ -44,8 +44,8 @@ public class OrderMenuService {
         return OrderMenuResponseDto.GetByOrderMenu.of(orderMenuRedisRepository.save(orderMenuRedis));
     }
 
-    public List<OrderMenuResponseDto.GetByOrderMenu> getOrderMenuListByUser(User user) {
-        List<OrderMenuRedis> orderMenuRedisList = orderMenuRedisRepository.findAllByUserId(user.getId());
+    public List<OrderMenuResponseDto.GetByOrderMenu> getOrderMenuList(User user) {
+        List<OrderMenuRedis> orderMenuRedisList = getOrderMenuListByUser(user.getId());
         return orderMenuRedisList.stream().map(OrderMenuResponseDto.GetByOrderMenu::of).toList();
     }
 
@@ -64,4 +64,11 @@ public class OrderMenuService {
                 () -> new RestApiException(OrderMenuErrorCode.NOT_FOUND_ORDER_MENU));
     }
 
+    public List<OrderMenuRedis> getOrderMenuListByUser(Long userId){
+        return orderMenuRedisRepository.findAllByUserId(userId);
+    }
+
+    public void deleteOrderMenuListInRedis(List<OrderMenuRedis> orderMenuRedisList){
+        orderMenuRedisRepository.deleteAll(orderMenuRedisList);
+    }
 }

@@ -10,6 +10,8 @@ import com.sparta.aiverification.order.entity.Order;
 import com.sparta.aiverification.order.repository.OrderRepository;
 import com.sparta.aiverification.ordermenu.dto.OrderMenuRequestDto;
 import com.sparta.aiverification.ordermenu.entity.OrderMenu;
+import com.sparta.aiverification.ordermenu.entity.OrderMenuRedis;
+import com.sparta.aiverification.ordermenu.service.OrderMenuService;
 import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.store.service.StoreService;
 import com.sparta.aiverification.user.entity.User;
@@ -35,11 +37,13 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
+    private final OrderMenuService orderMenuService;
+
 
 
 
     @Transactional
-    public OrderResponseDto.CreateResponseDto createOrder(User user, OrderRequestDto.CreateRequestDto requestDto) {
+    public OrderResponseDto.Create createOrder(User user, OrderRequestDto.Create requestDto) {
         if(user.getRole() != UserRoleEnum.CUSTOMER)
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
 
@@ -47,76 +51,77 @@ public class OrderService {
                 , storeService.findById(requestDto.getStoreId())
                 , requestDto.getDetail()
         );
-        Integer totalPrice = 0;
-        for(OrderMenuRequestDto createRequestDto : requestDto.getMenuList()){
-            Menu menu = menuService.findById(createRequestDto.getMenuId());
-            totalPrice += menu.getPrice() * createRequestDto.getQuantity();
+        List<OrderMenuRedis> orderMenuRedisList = orderMenuService.getOrderMenuListByUser(user.getId());
+        int totalPrice = 0;
+        for(OrderMenuRedis orderMenuRedis : orderMenuRedisList){
+            Menu menu = menuService.findById(orderMenuRedis.getMenuId());
+            totalPrice += menu.getPrice() * orderMenuRedis.getQuantity();
             order.addOrderMenu(OrderMenu.builder()
                     .order(order)
                     .menu(menu)
-                    .quantity(createRequestDto.getQuantity())
+                    .quantity(orderMenuRedis.getQuantity())
                     .build());
         }
-
         order.updateTotalPrice(totalPrice);
-        return OrderResponseDto.CreateResponseDto.of(orderRepository.save(order));
+        orderMenuService.deleteOrderMenuListInRedis(orderMenuRedisList);
+        return OrderResponseDto.Create.of(orderRepository.save(order));
     }
 
 
-    public OrderResponseDto.GetResponseDto getOrder(User user, UUID orderId) {
+    public OrderResponseDto.Get getOrder(User user, UUID orderId) {
         Order order = findById(orderId);
         if(!order.getUser().getId().equals(user.getId())){
             throw new RestApiException(OrderErrorCode.BAD_REQUEST_ORDER);
         }
-        return OrderResponseDto.GetResponseDto.of(order);
+        return OrderResponseDto.Get.of(order);
     }
 
 
-    public List<OrderResponseDto.GetResponseDto> getOrders(User user) {
+    public List<OrderResponseDto.Get> getOrders(User user) {
         if(user.getRole() == UserRoleEnum.CUSTOMER || user.getRole() == UserRoleEnum.OWNER)
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         return orderRepository.findAll()
                 .stream()
-                .map(OrderResponseDto.GetResponseDto::of)
+                .map(OrderResponseDto.Get::of)
                 .toList();
     }
 
 
-    public List<OrderResponseDto.GetResponseDto> getOrdersByUser(User user) {
+    public List<OrderResponseDto.Get> getOrdersByUser(User user) {
         if(user.getRole() == UserRoleEnum.OWNER)
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         return orderRepository.findAllByUserId(user.getId())
                 .stream()
-                .map(OrderResponseDto.GetResponseDto::of)
+                .map(OrderResponseDto.Get::of)
                 .toList();
     }
 
 
-    public List<OrderResponseDto.GetResponseDto> getOrdersByStore(User user, UUID storeId) {
+    public List<OrderResponseDto.Get> getOrdersByStore(User user, UUID storeId) {
         if(user.getRole() == UserRoleEnum.CUSTOMER)
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         // User가 가지고 있는 Store인지 확인하는 로직 필요
         return orderRepository.findAllByStoreId(storeId)
                 .stream()
-                .map(OrderResponseDto.GetResponseDto::of)
+                .map(OrderResponseDto.Get::of)
                 .toList();
     }
 
 
     @Transactional
-    public OrderResponseDto.UpdateResponseDto updateOrder(User user
-            ,OrderRequestDto.UpdateRequestDto requestDto) {
+    public OrderResponseDto.Update updateOrder(User user
+            ,OrderRequestDto.Update requestDto) {
         if(user.getRole() != UserRoleEnum.CUSTOMER)
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         Order order = findById(requestDto.getOrderId());
         if(!user.getId().equals(order.getUser().getId()))
             throw new RestApiException(OrderErrorCode.BAD_REQUEST_ORDER);
         order.updateDetail(requestDto.getDetail());
-        return OrderResponseDto.UpdateResponseDto.of(order);
+        return OrderResponseDto.Update.of(order);
     }
 
     @Transactional
-    public OrderResponseDto.DeleteResponseDto deleteOrder(User user, UUID orderId) {
+    public OrderResponseDto.Delete deleteOrder(User user, UUID orderId) {
         Order order = findById(orderId);
         if(user.getRole() == UserRoleEnum.OWNER){
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
@@ -125,7 +130,7 @@ public class OrderService {
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         }
         order.deleteOrder(user.getId());
-        return OrderResponseDto.DeleteResponseDto.of(order);
+        return OrderResponseDto.Delete.of(order);
     }
 
     public Order findById(UUID orderId){

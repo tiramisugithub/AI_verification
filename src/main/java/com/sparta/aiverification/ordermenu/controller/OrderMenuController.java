@@ -33,9 +33,9 @@ public class OrderMenuController {
     }
     // 해당 유저가 주문한 내역 전체 조회
     @GetMapping
-    public RestApiResponse<List<OrderMenuResponseDto.GetByOrderMenu>> getOrderMenuListByUser(
+    public RestApiResponse<List<OrderMenuResponseDto.GetByOrderMenu>> getOrderMenuLis(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return RestApiResponse.success(orderMenuService.getOrderMenuListByUser(userDetails.getUser()));
+        return RestApiResponse.success(orderMenuService.getOrderMenuList(userDetails.getUser()));
     }
 
     @DeleteMapping("/{orderMenuId}")
