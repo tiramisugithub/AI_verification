@@ -1,5 +1,8 @@
 package com.sparta.aiverification.user.controller;
 
+import com.sparta.aiverification.common.CommonErrorCode;
+import com.sparta.aiverification.common.RestApiException;
+import com.sparta.aiverification.common.RestApiResponse;
 import com.sparta.aiverification.user.dto.AuthResponse;
 import com.sparta.aiverification.user.dto.LoginRequestDto;
 import com.sparta.aiverification.user.dto.SignupRequestDto;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,52 +32,40 @@ import java.util.NoSuchElementException;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 @Slf4j
+//@Secured({UserRoleEnum.Authority.MASTER})
 public class AdminController {
 
     private final AdminService adminService;
 
     @PostMapping("/create-admin")
-    public ResponseEntity<String> createManager(@AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestBody SignupRequestDto signupRequestDto) {
-        try {
-            if(signupRequestDto.getRole() == null){
-                throw new IllegalArgumentException("Role cannot be null");
-            }
-            adminService.createAdminUser(userDetails, signupRequestDto, signupRequestDto.getRole());
-            // 역할에 따른 메시지 선택
-            String message;
-            if (signupRequestDto.getRole() == UserRoleEnum.MANAGER) {
-                message = "매니저 생성 완료 :)";
-            } else if (signupRequestDto.getRole() == UserRoleEnum.MASTER) {
-                message = "마스터 생성 완료 :)";
-            } else {
-                message = "계정 생성 완료 :)";
-            }
-            return ResponseEntity.ok(message);
+    public RestApiResponse<String> createAdmin(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody SignupRequestDto signupRequestDto) {
 
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        if (signupRequestDto.getRole() == null) {
+            throw new RestApiException(CommonErrorCode.INVALID_PARAMETER);
         }
+
+        adminService.createAdminUser(userDetails, signupRequestDto, signupRequestDto.getRole());
+
+        String message = switch (signupRequestDto.getRole()) {
+            case MANAGER -> "매니저 생성 완료 :)";
+            case MASTER -> "마스터 생성 완료 :)";
+            default -> "계정 생성 완료 :)";
+        };
+
+        return RestApiResponse.success(message);
     }
 
-//    @GetMapping("/{userId}")
-//    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long userId) {
-//        User user = adminService.findById(userId)
-//                .orElseThrow(() -> new NoSuchElementException("No user found with ID : " + userId));
-//
-//        if (user != null) {
-//            UserResponseDto responseDto = new UserResponseDto().of(user);
-//            return ResponseEntity.ok(responseDto);
-//        } else {
-//            return ResponseEntity.status(404).body(null);
-//        }
-//    }
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto.UserDetailResponseDto> getUserById(@PathVariable Long userId) {
-        // 사용자가 존재하지 않는 경우 NoSuchElementException을 던집니다.
+    public RestApiResponse<UserResponseDto.UserDetailResponseDto> getUserById(
+            @PathVariable Long userId) {
+
         User user = adminService.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("No user found with ID : " + userId));
-        return ResponseEntity.ok(UserResponseDto.UserDetailResponseDto.of(user));
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
+
+        UserResponseDto.UserDetailResponseDto responseDto = UserResponseDto.UserDetailResponseDto.of(user);
+        return RestApiResponse.success(responseDto);
     }
 
     //전체 사용자 목록 조회 (페이지네이션 및 정렬 포함)

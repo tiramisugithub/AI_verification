@@ -32,10 +32,6 @@ public class AdminService {
 
     // 매니저 또는 마스터 생성
     public void createAdminUser(UserDetails userDetails, SignupRequestDto requestDto, UserRoleEnum role) {
-
-        String roleName = userDetails.getAuthorities().toString();
-        log.info("@@@AdminService : {}" ,roleName); // 인증 객체의 권한 확인
-
         boolean hasRoleMaster = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                         .allMatch("ROLE_MASTER"::equals);
