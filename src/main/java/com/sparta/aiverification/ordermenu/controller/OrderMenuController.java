@@ -7,10 +7,7 @@ import com.sparta.aiverification.ordermenu.service.OrderMenuService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/order-menu")
@@ -20,9 +17,16 @@ public class OrderMenuController {
     private final OrderMenuService orderMenuService;
 
     @PostMapping
-    public RestApiResponse<OrderMenuResponseDto.SimpleResponseDto> createOrderMenu(
+    public RestApiResponse<OrderMenuResponseDto.GetByOrderMenu> createOrderMenu(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody OrderMenuRequestDto requestDto) {
+            @RequestBody OrderMenuRequestDto.Create requestDto) {
         return RestApiResponse.success(orderMenuService.createOrderMenu(userDetails.getUser(), requestDto));
+    }
+
+    @PatchMapping
+    public RestApiResponse<OrderMenuResponseDto.GetByOrderMenu> updateOrderMenu(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody OrderMenuRequestDto.Update requestDto) {
+        return RestApiResponse.success(orderMenuService.updateOrderMenu(userDetails.getUser(), requestDto));
     }
 }

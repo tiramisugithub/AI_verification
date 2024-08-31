@@ -15,14 +15,14 @@ public class OrderMenuResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    static public class GetResponseDto{
+    static public class GetByOrder {
         private UUID menuId;
         private String name;
         private Integer price;
         private String description;
         private Integer quantity;
-        public static GetResponseDto of(OrderMenu orderMenu){
-            return GetResponseDto.builder()
+        public static GetByOrder of(OrderMenu orderMenu){
+            return GetByOrder.builder()
                     .menuId(orderMenu.getId())
                     .name(orderMenu.getMenu().getName())
                     .price(orderMenu.getMenu().getPrice())
@@ -36,12 +36,15 @@ public class OrderMenuResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    static public class SimpleResponseDto {
+    static public class GetByOrderMenu {
+
+        private String orderMenuId;
         private UUID menuId;
         private Integer quantity;
 
-        public static SimpleResponseDto of(OrderMenuRedis orderMenuRedis){
-            return SimpleResponseDto.builder()
+        public static GetByOrderMenu of(OrderMenuRedis orderMenuRedis){
+            return GetByOrderMenu.builder()
+                    .orderMenuId(orderMenuRedis.getId())
                     .menuId(orderMenuRedis.getMenuId())
                     .quantity(orderMenuRedis.getQuantity())
                     .build();

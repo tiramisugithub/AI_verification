@@ -9,7 +9,10 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum OrderMenuErrorCode implements ErrorCode {
 
-    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "This Role is No Permission");
+    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "This Role is No Permission"),
+    NOT_FOUND_ORDER_MENU(HttpStatus.NOT_FOUND, "This Menu is not found"),
+    BAD_REQUEST_ORDER_MENU(HttpStatus.BAD_REQUEST, "This OrderMenu is not matched user");
+
 
     private final HttpStatus httpStatus;
     private final String message;

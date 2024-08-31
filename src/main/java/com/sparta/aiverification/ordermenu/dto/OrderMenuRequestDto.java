@@ -8,15 +8,28 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-
 public class OrderMenuRequestDto {
 
-    private UUID menuId;
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Create{
 
-    private Integer quantity;
+        private UUID menuId;
+
+        private Integer quantity;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Update{
+
+        private String orderMenuId;
+
+        private Integer quantity;
+    }
 
 }

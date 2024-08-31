@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -19,6 +20,7 @@ public class OrderMenuRedis implements Serializable {
 
     private UUID menuId;
 
+    @Indexed
     private Long userId;
 
     private Integer quantity;
@@ -31,4 +33,7 @@ public class OrderMenuRedis implements Serializable {
         this.quantity = quantity;
     }
 
+    public void updateQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 }
