@@ -39,7 +39,7 @@ public class OrderResponseDto {
 
         private UUID orderId;
 
-        private List<OrderMenuResponseDto.GetResponseDto> menuList;
+        private List<OrderMenuResponseDto.GetByOrder> menuList;
 
         private Integer totalPrice;
 
@@ -47,7 +47,7 @@ public class OrderResponseDto {
         public static GetResponseDto of(Order order){
             return GetResponseDto.builder()
                     .orderId(order.getId())
-                    .menuList(order.getOrderMenuList().stream().map(OrderMenuResponseDto.GetResponseDto::of).toList())
+                    .menuList(order.getOrderMenuList().stream().map(OrderMenuResponseDto.GetByOrder::of).toList())
                     .totalPrice(order.getTotalPrice())
                     .details(order.getDetail())
                     .build();

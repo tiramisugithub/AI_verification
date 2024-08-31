@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/order-menu")
 @RequiredArgsConstructor
@@ -29,4 +31,11 @@ public class OrderMenuController {
             @RequestBody OrderMenuRequestDto.Update requestDto) {
         return RestApiResponse.success(orderMenuService.updateOrderMenu(userDetails.getUser(), requestDto));
     }
+    // 해당 유저가 주문한 내역 전체 조회
+    @GetMapping
+    public RestApiResponse<List<OrderMenuResponseDto.GetByOrderMenu>> getOrderMenuListByUser(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return RestApiResponse.success(orderMenuService.getOrderMenuListByUser(userDetails.getUser()));
+    }
+
 }
