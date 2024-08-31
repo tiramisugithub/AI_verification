@@ -22,14 +22,14 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public RestApiResponse<OrderResponseDto.CreateResponseDto> createOrder(
+    public RestApiResponse<OrderResponseDto.Create> createOrder(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody OrderRequestDto.CreateRequestDto requestDto) {
-        return RestApiResponse.success(null);
+            @RequestBody OrderRequestDto.Create requestDto) {
+        return RestApiResponse.success(orderService.createOrder(userDetails.getUser(), requestDto));
     }
 
     @GetMapping("/{orderId}")
-    public RestApiResponse<OrderResponseDto.GetResponseDto> getOrder(
+    public RestApiResponse<OrderResponseDto.Get> getOrder(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID orderId) {
         return RestApiResponse.success(orderService.getOrder(userDetails.getUser(), orderId));
@@ -37,21 +37,21 @@ public class OrderController {
 
     // 주문 전체 조회
     @GetMapping
-    public RestApiResponse<List<OrderResponseDto.GetResponseDto>> getOrders(
+    public RestApiResponse<List<OrderResponseDto.Get>> getOrders(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return RestApiResponse.success(orderService.getOrders(userDetails.getUser()));
     }
 
     // 해당 유저에 대한 전체 조회
     @GetMapping("/user")
-    public RestApiResponse<List<OrderResponseDto.GetResponseDto>> getOrdersByUser(
+    public RestApiResponse<List<OrderResponseDto.Get>> getOrdersByUser(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return RestApiResponse.success(orderService.getOrdersByUser(userDetails.getUser()));
     }
 
     // 해당 가게에 대한 전체 조회
     @GetMapping("/store/{storeId}")
-    public RestApiResponse<List<OrderResponseDto.GetResponseDto>> getOrdersByStore(
+    public RestApiResponse<List<OrderResponseDto.Get>> getOrdersByStore(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID storeId) {
         return RestApiResponse.success(orderService.getOrdersByStore(userDetails.getUser(), storeId));
@@ -59,14 +59,14 @@ public class OrderController {
 
     // 요구사항 수정
     @PatchMapping
-    public RestApiResponse<OrderResponseDto.UpdateResponseDto> updateOrder(
+    public RestApiResponse<OrderResponseDto.Update> updateOrder(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody OrderRequestDto.UpdateRequestDto requestDto) {
+            @RequestBody OrderRequestDto.Update requestDto) {
         return RestApiResponse.success(orderService.updateOrder(userDetails.getUser(), requestDto));
     }
 
     @DeleteMapping("/{orderId}")
-    public RestApiResponse<OrderResponseDto.DeleteResponseDto> deleteOrder(
+    public RestApiResponse<OrderResponseDto.Delete> deleteOrder(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID orderId) {
         return RestApiResponse.success(orderService.deleteOrder(userDetails.getUser(), orderId));

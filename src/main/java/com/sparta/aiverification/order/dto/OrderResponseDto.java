@@ -17,14 +17,14 @@ public class OrderResponseDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateResponseDto{
+    public static class Create{
 
         private UUID orderId;
 
         private String details;
 
-        public static CreateResponseDto of(Order order){
-            return CreateResponseDto.builder()
+        public static Create of(Order order){
+            return Create.builder()
                     .orderId(order.getId())
                     .details(order.getDetail())
                     .build();
@@ -35,19 +35,19 @@ public class OrderResponseDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetResponseDto{
+    public static class Get{
 
         private UUID orderId;
 
-        private List<OrderMenuResponseDto.GetResponseDto> menuList;
+        private List<OrderMenuResponseDto.GetByOrder> menuList;
 
         private Integer totalPrice;
 
         private String details;
-        public static GetResponseDto of(Order order){
-            return GetResponseDto.builder()
+        public static Get of(Order order){
+            return Get.builder()
                     .orderId(order.getId())
-                    .menuList(order.getOrderMenuList().stream().map(OrderMenuResponseDto.GetResponseDto::of).toList())
+                    .menuList(order.getOrderMenuList().stream().map(OrderMenuResponseDto.GetByOrder::of).toList())
                     .totalPrice(order.getTotalPrice())
                     .details(order.getDetail())
                     .build();
@@ -58,15 +58,15 @@ public class OrderResponseDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UpdateResponseDto{
+    public static class Update{
 
         private UUID orderId;
 
         private Integer totalPrice;
 
         private String details;
-        public static UpdateResponseDto of(Order order){
-            return UpdateResponseDto.builder()
+        public static Update of(Order order){
+            return Update.builder()
                     .orderId(order.getId())
                     .totalPrice(order.getTotalPrice())
                     .details(order.getDetail())
@@ -78,14 +78,14 @@ public class OrderResponseDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DeleteResponseDto {
+    public static class Delete {
 
         private LocalDateTime deletedAt;
 
         private Long deletedBy;
 
-        public static DeleteResponseDto of(Order order){
-            return DeleteResponseDto.builder()
+        public static Delete of(Order order){
+            return Delete.builder()
                     .deletedAt(order.getDeletedAt())
                     .deletedBy(order.getDeletedBy())
                     .build();

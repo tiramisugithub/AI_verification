@@ -1,6 +1,7 @@
 package com.sparta.aiverification.order.dto;
 
 import com.sparta.aiverification.ordermenu.dto.OrderMenuRequestDto;
+import com.sparta.aiverification.ordermenu.entity.OrderMenu;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,11 +16,9 @@ public class OrderRequestDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateRequestDto{
+    public static class Create{
 
         private UUID storeId;
-
-        private List<OrderMenuRequestDto.CreateRequestDto> menuList;
 
         private String detail;
 
@@ -29,7 +28,7 @@ public class OrderRequestDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UpdateRequestDto {
+    public static class Update {
 
         private UUID orderId;
         private String detail;

@@ -7,17 +7,29 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+
 public class OrderMenuRequestDto {
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    static public class CreateRequestDto{
+    public static class Create{
 
         private UUID menuId;
 
         private Integer quantity;
-
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Update{
+
+        private String orderMenuId;
+
+        private Integer quantity;
+    }
+
 }
