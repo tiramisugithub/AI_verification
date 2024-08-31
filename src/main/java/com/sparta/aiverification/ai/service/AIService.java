@@ -39,7 +39,7 @@ public class AIService {
   private void isCorrectOWNER(User user, UUID menuId){
 
     if(user.getRole() == UserRoleEnum.OWNER){
-      Store store = storeRepository.findByMenuId(menuId);
+      Store store = storeRepository.findByMenuId(menuId).get();
 
       if(user.getId() !=  store.getUserId()){
         throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
@@ -65,7 +65,7 @@ public class AIService {
     return new AIResponseDto(ai);
   }
 
-  public Page<AIResponseDto> getAIList(int page, int size, String sortBy, boolean isAsc,User user) {
+  public Page<AIResponseDto> getAIList(UUID menuId,int page, int size, String sortBy, boolean isAsc,User user) {
 
     // validation
     isNotCustomer(user);
@@ -75,16 +75,16 @@ public class AIService {
     Sort sort = Sort.by(direction, sortBy);
     Pageable pageable =  PageRequest.of(page, size, sort);
 
-    Page<AI> aiList;
+    Page<AI> ai;
 
-    // OWNER : 본인 가게 목록만 조회
+    // OWNER : 특정 가게 목록만 조회
     if(user.getRole() == UserRoleEnum.OWNER){
-      aiList = aiRepository.findAllByUser(user, pageable);
+      ai = aiRepository.findAIByMenuId(menuId, pageable);
     }
     else{
-      aiList = aiRepository.findAll(pageable);
+      ai = aiRepository.findAll(pageable);
     }
-    return aiList.map(AIResponseDto::new);
+    return ai.map(AIResponseDto::new);
   }
 
   public AIResponseDto getAI(Long aiId, User user) {
@@ -100,7 +100,6 @@ public class AIService {
   public AIResponseDto updateAI(Long aiId, User user, AIRequestDto aiRequestDto) {
     // validation
     isNotCustomer(user);
-
 
     AI ai = aiRepository.findById(aiId).orElseThrow(NoSuchElementException::new);
     isCorrectOWNER(user, ai.getMenu().getId());

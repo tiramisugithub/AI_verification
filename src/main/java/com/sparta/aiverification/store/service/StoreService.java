@@ -2,9 +2,11 @@ package com.sparta.aiverification.store.service;
 
 import com.sparta.aiverification.category.entity.Category;
 import com.sparta.aiverification.category.repository.CategoryRepository;
+import com.sparta.aiverification.common.RestApiException;
 import com.sparta.aiverification.menu.repository.MenuRepository;
 import com.sparta.aiverification.region.entity.Region;
 import com.sparta.aiverification.region.repository.RegionRepository;
+import com.sparta.aiverification.store.dto.StoreErrorCode;
 import com.sparta.aiverification.store.dto.StoreRequestDto;
 import com.sparta.aiverification.store.dto.StoreResponseDto;
 import com.sparta.aiverification.store.entity.Store;
@@ -85,7 +87,7 @@ public class StoreService {
 
     // OWNER : 본인 가게 목록만 조회
     if(user.getRole() == UserRoleEnum.OWNER){
-      storeList = storeRepository.findAllByUser(user, pageable);
+      storeList = storeRepository.findAllByUserId(user.getId(), pageable);
     }
     // CUSTOMER :  status가 true인 값만 조회
     else if(user.getRole() == UserRoleEnum.CUSTOMER) {
@@ -107,7 +109,7 @@ public class StoreService {
 
     // OWNER : 본인 가게 목록만 조회
     if(user.getRole() == UserRoleEnum.OWNER){
-      storeList = storeRepository.findAllByUserAAndCategory(user, categoryId,pageable);
+      storeList = storeRepository.findAllByUserIdAndCategory(user.getId(), categoryId,pageable);
     }
     // CUSTOMER :  status가 true인 값만 조회
     else if(user.getRole() == UserRoleEnum.CUSTOMER) {
@@ -129,7 +131,7 @@ public class StoreService {
 
     // 사용자 권한이 OWNER 면 본인 가게 목록만 조회
     if (user.getRole() == UserRoleEnum.OWNER) {
-      storeList = storeRepository.findAllByUserAAndRegion(user, regionId, pageable);
+      storeList = storeRepository.findAllByUserIdAndRegion(user.getId(), regionId, pageable);
     }
     // CUSTOMER :  status가 true인 값만 조회
     else if(user.getRole() == UserRoleEnum.CUSTOMER) {
@@ -187,4 +189,11 @@ public class StoreService {
       store.delete(user.getId());
      store.setStatusFalse();;
   }
+
+
+  public Store findById(UUID storeId){
+    return storeRepository.findById(storeId).orElseThrow(()
+        -> new RestApiException(StoreErrorCode.NOT_FOUND_STORE));
+  }
+
 }
