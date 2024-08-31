@@ -38,4 +38,11 @@ public class OrderMenuController {
         return RestApiResponse.success(orderMenuService.getOrderMenuListByUser(userDetails.getUser()));
     }
 
+    @DeleteMapping("/{orderMenuId}")
+    public RestApiResponse<OrderMenuResponseDto.Delete> deleteOrderMenu(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable String orderMenuId) {
+        return RestApiResponse.success(orderMenuService.deleteOrderMenu(userDetails.getUser(), orderMenuId));
+    }
+
 }

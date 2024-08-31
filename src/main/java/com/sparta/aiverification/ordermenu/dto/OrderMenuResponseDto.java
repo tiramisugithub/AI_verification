@@ -51,4 +51,20 @@ public class OrderMenuResponseDto {
         }
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static public class Delete {
+
+        private String orderMenuId;
+        private UUID menuId;
+        public static Delete of(OrderMenuRedis orderMenuRedis){
+            return Delete.builder()
+                    .orderMenuId(orderMenuRedis.getId())
+                    .menuId(orderMenuRedis.getMenuId())
+                    .build();
+        }
+    }
+
 }

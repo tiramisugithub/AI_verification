@@ -11,10 +11,8 @@ import com.sparta.aiverification.user.enums.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -50,8 +48,20 @@ public class OrderMenuService {
         List<OrderMenuRedis> orderMenuRedisList = orderMenuRedisRepository.findAllByUserId(user.getId());
         return orderMenuRedisList.stream().map(OrderMenuResponseDto.GetByOrderMenu::of).toList();
     }
+
+    public OrderMenuResponseDto.Delete deleteOrderMenu(User user, String orderMenuId) {
+        if(user.getRole() == UserRoleEnum.OWNER)
+            throw new RestApiException(OrderMenuErrorCode.UNAUTHORIZED_USER);
+        OrderMenuRedis orderMenuRedis = findById(orderMenuId);
+        if(!orderMenuRedis.getUserId().equals(user.getId()))
+            throw new RestApiException(OrderMenuErrorCode.BAD_REQUEST_ORDER_MENU);
+        orderMenuRedisRepository.delete(orderMenuRedis);
+        return OrderMenuResponseDto.Delete.of(orderMenuRedis);
+    }
+
     public OrderMenuRedis findById(String orderMenuId){
         return orderMenuRedisRepository.findById(orderMenuId).orElseThrow(
                 () -> new RestApiException(OrderMenuErrorCode.NOT_FOUND_ORDER_MENU));
     }
+
 }
