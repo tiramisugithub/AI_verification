@@ -3,13 +3,11 @@ package com.sparta.aiverification.order.entity;
 
 import com.sparta.aiverification.Timestamped;
 import com.sparta.aiverification.ordermenu.entity.OrderMenu;
+import com.sparta.aiverification.payment.entity.Payment;
 import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +16,9 @@ import java.util.UUID;
 
 @Getter
 @Entity
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "p_order")
 public class Order extends Timestamped {
 
@@ -38,29 +38,29 @@ public class Order extends Timestamped {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderMenu> orderMenuList = new ArrayList<>();
 
+    @OneToOne(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private Payment payment;
 
     private String detail;
 
     private Integer totalPrice;
 
-    private Boolean status = true;
+    private String deliveryAddress;
 
-    @Builder
-    public Order(User user, Store store, List<OrderMenu> orderMenuList,
-                 String detail, Integer totalPrice, Boolean status){
-        this.user = user;
-        this.store = store;
-        this.orderMenuList = orderMenuList;
-        this.detail = detail;
-        this.totalPrice = totalPrice;
-        this.status = status;
-    }
+    private Boolean isDeleted = false;
 
-    public void addOrderMenu(OrderMenu orderMenu){
+    @Enumerated(EnumType.STRING)
+    private OrderPaymentState orderPaymentState;
+
+    @Enumerated(EnumType.STRING)
+    private OrderType orderType;
+
+
+    public void addOrderMenu(OrderMenu orderMenu) {
         this.orderMenuList.add(orderMenu);
     }
 
-    public void updateTotalPrice(Integer totalPrice){
+    public void updateTotalPrice(Integer totalPrice) {
         this.totalPrice = totalPrice;
     }
 
@@ -68,8 +68,13 @@ public class Order extends Timestamped {
         this.detail = detail;
     }
 
-    public void deleteOrder(Long userId){
-        this.delete(userId);
-        this.status = false;
+
+    public void updateOrderPaymentState(OrderPaymentState orderPaymentState){
+        this.orderPaymentState = orderPaymentState;
     }
+    public void deleteOrder(Long userId) {
+        this.delete(userId);
+        this.isDeleted = true;
+    }
+
 }

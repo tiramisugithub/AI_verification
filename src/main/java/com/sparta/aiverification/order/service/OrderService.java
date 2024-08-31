@@ -7,8 +7,9 @@ import com.sparta.aiverification.order.dto.OrderErrorCode;
 import com.sparta.aiverification.order.dto.OrderRequestDto;
 import com.sparta.aiverification.order.dto.OrderResponseDto;
 import com.sparta.aiverification.order.entity.Order;
+import com.sparta.aiverification.order.entity.OrderPaymentState;
+import com.sparta.aiverification.order.entity.OrderType;
 import com.sparta.aiverification.order.repository.OrderRepository;
-import com.sparta.aiverification.ordermenu.dto.OrderMenuRequestDto;
 import com.sparta.aiverification.ordermenu.entity.OrderMenu;
 import com.sparta.aiverification.ordermenu.entity.OrderMenuRedis;
 import com.sparta.aiverification.ordermenu.service.OrderMenuService;
@@ -50,6 +51,8 @@ public class OrderService {
         Order order = createEmptyOrder(userService.findById(user.getId())
                 , storeService.findById(requestDto.getStoreId())
                 , requestDto.getDetail()
+                , requestDto.getOrderType()
+                , requestDto.getDeliveryAddress()
         );
         List<OrderMenuRedis> orderMenuRedisList = orderMenuService.getOrderMenuListByUser(user.getId());
         int totalPrice = 0;
@@ -137,14 +140,21 @@ public class OrderService {
         return orderRepository.findById(orderId).orElseThrow(() -> new RestApiException(OrderErrorCode.NOT_FOUND_ORDER));
     }
 
-    private Order createEmptyOrder(User user, Store store, String detail) {
+    private Order createEmptyOrder(User user,
+                                   Store store,
+                                   String detail,
+                                   OrderType orderType,
+                                   String deliveryAddress) {
         List<OrderMenu> orderMenuList = new ArrayList<>();
         return Order.builder()
                 .user(user)
                 .store(store)
                 .orderMenuList(orderMenuList)
                 .detail(detail)
-                .status(true)
+                .orderType(orderType)
+                .deliveryAddress(deliveryAddress)
+                .orderPaymentState(OrderPaymentState.PENDING)
+                .isDeleted(false)
                 .build();
     }
 

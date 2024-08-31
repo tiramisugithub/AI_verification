@@ -1,5 +1,7 @@
 package com.sparta.aiverification.order.dto;
 
+import com.sparta.aiverification.order.entity.OrderPaymentState;
+import com.sparta.aiverification.order.entity.OrderType;
 import com.sparta.aiverification.ordermenu.dto.OrderMenuRequestDto;
 import com.sparta.aiverification.ordermenu.entity.OrderMenu;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,10 @@ public class OrderRequestDto {
     public static class Create{
 
         private UUID storeId;
+
+        private OrderType orderType;
+
+        private String deliveryAddress;
 
         private String detail;
 
