@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,10 +27,16 @@ public class PaymentController {
     }
 
     @GetMapping("/{paymentId}")
-    public RestApiResponse<PaymentResponseDto.GetByPaymentId> getPayment(
+    public RestApiResponse<PaymentResponseDto.Get> getPayment(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable UUID paymentId) {
         return RestApiResponse.success(paymentService.getPayment(userDetails.getUser(), paymentId));
+    }
+
+    @GetMapping
+    public RestApiResponse<List<PaymentResponseDto.Get>> getPayments(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return RestApiResponse.success(paymentService.getPayments(userDetails.getUser()));
     }
 
 }

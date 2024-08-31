@@ -28,14 +28,14 @@ public class PaymentResponseDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetByPaymentId {
+    public static class Get {
 
         private UUID paymentId;
         private Integer totalPrice;
         private PaymentMethod paymentMethod;
 
-        public static GetByPaymentId of(Payment payment) {
-            return GetByPaymentId.builder()
+        public static Get of(Payment payment) {
+            return Get.builder()
                     .paymentId(payment.getId())
                     .totalPrice(payment.getOrder().getTotalPrice())
                     .paymentMethod(payment.getPaymentMethod())
