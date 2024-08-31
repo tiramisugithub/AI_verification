@@ -1,14 +1,20 @@
 package com.sparta.aiverification.user.service;
 
+import com.sparta.aiverification.common.CommonErrorCode;
 import com.sparta.aiverification.common.RestApiException;
 import com.sparta.aiverification.order.dto.OrderErrorCode;
-import com.sparta.aiverification.user.dto.*;
+import com.sparta.aiverification.user.dto.SignupRequestDto;
+import com.sparta.aiverification.user.dto.UserInfoDto;
+import com.sparta.aiverification.user.dto.UserRequestDto;
+import com.sparta.aiverification.user.dto.UserResponseDto;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
 import com.sparta.aiverification.user.jwt.JwtUtil;
 import com.sparta.aiverification.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +27,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CacheManager cacheManager;
+
 
     private final JwtUtil jwtUtil;
 
@@ -30,24 +38,11 @@ public class UserService {
         String address = requestDto.getAddress();
         String phone = requestDto.getPhone();
         UserRoleEnum role = requestDto.getRole();
-
-        // 회원 중복 확인
-        Optional<User> checkUsername = userRepository.findByUsername(username);
-        if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
-        }
-
-        // email 중복확인
         String email = requestDto.getEmail();
-        Optional<User> checkEmail = userRepository.findByEmail(email);
-        if (checkEmail.isPresent()) {
-            throw new IllegalArgumentException("중복된 Email 입니다.");
-        }
 
-        //권한 확인
-        if(UserRoleEnum.MASTER.equals(role) || UserRoleEnum.MANAGER.equals(role)){
-            throw new IllegalArgumentException("관리자 및 매니저는 등록이 불가능합니다.");
-        }
+        //validation
+        validateUser(username,email);
+        validateRole(role);
 
         // 사용자 등록
         User user = User.builder()
@@ -60,27 +55,6 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
-    }
-
-    public AuthResponse signIn(LoginRequestDto loginRequestDto) {
-        String username = loginRequestDto.getUsername();
-        String password = loginRequestDto.getPassword();
-
-        // 사용자 확인
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
-
-        // 비밀번호 확인
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("Invalid username or password");
-        }
-
-        // JWT 토큰 생성
-        String token = jwtUtil.createToken(username, user.getRole());
-
-
-        // AuthResponse 반환
-        return AuthResponse.of(token);
     }
 
     //회원 존재 여부 검증
@@ -98,16 +72,15 @@ public class UserService {
                 return new UserInfoDto(user.getUsername(), isAdmin);
             }
         }
-        return null;
+        throw new RestApiException(CommonErrorCode.INVALID_PARAMETER);
     }
 
     public UserResponseDto updateUser(Long userId, UserRequestDto userRequestDto) {
-        log.info("updateUser method called");
+        String username = userRequestDto.getUsername();
+        String email = userRequestDto.getEmail();
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        log.info("new password : {}", userRequestDto.getPassword());
-
 
         // 비밀번호가 있는 경우만 인코딩
         if (userRequestDto.getPassword() != null && !userRequestDto.getPassword().isBlank()) {
@@ -115,8 +88,22 @@ public class UserService {
             user.setPassword(encodedPassword);
         }
 
+        // 기존 권한 저장
+        UserRoleEnum oldRole = user.getRole();
+
+        //validation
+        validateRole(userRequestDto.getRole());
+
         // 사용자 정보 업데이트
         user.updateInfo(userRequestDto);
+
+        // 권한 변경 시 캐시 삭제
+        if (userRequestDto.getRole() != null && !userRequestDto.getRole().equals(oldRole)) {
+            Cache cache = cacheManager.getCache("users");
+            if (cache != null) {
+                cache.evict(user.getUsername());
+            }
+        }
 
         // 변경된 사용자 정보를 저장
         User updatedUser = userRepository.save(user);
@@ -127,7 +114,7 @@ public class UserService {
 
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
 
         userRepository.delete(user);
         log.info("User with ID {} has been deleted", userId);
@@ -137,5 +124,28 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RestApiException(OrderErrorCode.NOT_FOUND_ORDER));
     }
+
+    // 사용자 존재 여부 검증
+    private void validateUser(String username, String email) {
+        Optional<User> checkUsername = userRepository.findByUsername(username);
+        if (checkUsername.isPresent()) {
+            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+        }
+
+        Optional<User> checkEmail = userRepository.findByEmail(email);
+        if (checkEmail.isPresent()) {
+            throw new IllegalArgumentException("중복된 Email 입니다.");
+        }
+    }
+
+    // 권한 확인
+    private void validateRole(UserRoleEnum role) {
+        if (UserRoleEnum.MASTER.equals(role) || UserRoleEnum.MANAGER.equals(role)) {
+            throw new IllegalArgumentException("관리자 및 매니저는 등록이 불가능합니다.");
+        }
+    }
+
+
+
 
 }

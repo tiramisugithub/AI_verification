@@ -4,6 +4,8 @@ package com.sparta.aiverification.user.security;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,12 +16,15 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j(topic = "UserDetailsServiceImpl")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
     @Override
+    @Cacheable(value = "users", key = "args[0]")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("called loadUserByUsername");
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Not Found " + username));
 

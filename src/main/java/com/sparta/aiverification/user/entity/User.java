@@ -7,6 +7,8 @@ import com.sparta.aiverification.user.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 
 @Entity
 @Table(name = "p_users")
@@ -14,7 +16,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class User extends Timestamped {
+public class User extends Timestamped implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +42,7 @@ public class User extends Timestamped {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Setter
     private UserRoleEnum role;
 
 
@@ -56,6 +59,10 @@ public class User extends Timestamped {
         if (userRequestDto.getPhone() != null && !userRequestDto.getPhone().isBlank()) {
             this.phone = userRequestDto.getPhone();
         }
+        if (userRequestDto.getRole() != null) {
+            this.role = userRequestDto.getRole();
+        }
+
     }
 
 }
