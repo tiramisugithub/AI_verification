@@ -7,13 +7,12 @@ import com.sparta.aiverification.payment.service.PaymentService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/payment")
+@RequestMapping("/payments")
 @RequiredArgsConstructor
 public class PaymentController {
 
@@ -24,6 +23,13 @@ public class PaymentController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody PaymentRequestDto.Create requestDto) {
         return RestApiResponse.success(paymentService.createPayment(userDetails.getUser(), requestDto));
+    }
+
+    @GetMapping("/{paymentId}")
+    public RestApiResponse<PaymentResponseDto.GetByPaymentId> getPayment(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID paymentId) {
+        return RestApiResponse.success(paymentService.getPayment(userDetails.getUser(), paymentId));
     }
 
 }

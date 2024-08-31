@@ -1,6 +1,7 @@
 package com.sparta.aiverification.payment.dto;
 
 import com.sparta.aiverification.payment.entity.Payment;
+import com.sparta.aiverification.payment.entity.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,4 +24,23 @@ public class PaymentResponseDto {
                     .build();
         }
     }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetByPaymentId {
+
+        private UUID paymentId;
+        private Integer totalPrice;
+        private PaymentMethod paymentMethod;
+
+        public static GetByPaymentId of(Payment payment) {
+            return GetByPaymentId.builder()
+                    .paymentId(payment.getId())
+                    .totalPrice(payment.getOrder().getTotalPrice())
+                    .paymentMethod(payment.getPaymentMethod())
+                    .build();
+        }
+    }
+
 }

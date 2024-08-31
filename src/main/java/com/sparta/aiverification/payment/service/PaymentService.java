@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -41,4 +43,17 @@ public class PaymentService {
         ));
     }
 
+    public PaymentResponseDto.GetByPaymentId getPayment(User user, UUID paymentId) {
+        Payment payment = findById(paymentId);
+        if (!payment.getUser().getId().equals(user.getId())) {
+            throw new RestApiException(PaymentErrorCode.BAD_REQUEST_PAYMENT);
+        }
+        return PaymentResponseDto.GetByPaymentId.of(payment);
+    }
+
+    public Payment findById(UUID paymentId) {
+        return paymentRepository.findById(paymentId).orElseThrow(
+                () -> new RestApiException(PaymentErrorCode.NOT_FOUND_PAYMENT)
+        );
+    }
 }
