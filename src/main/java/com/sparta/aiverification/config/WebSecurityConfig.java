@@ -65,7 +65,6 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers("/users/sign-up").permitAll() // 회원가입 요청 허가
-                        .requestMatchers("/users/sign-in").permitAll() // 로그인 요청 허가
                         .requestMatchers("/admin/**").hasAnyRole("MANAGER", "MASTER")
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
@@ -73,6 +72,9 @@ public class WebSecurityConfig {
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        //http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        //http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
     }

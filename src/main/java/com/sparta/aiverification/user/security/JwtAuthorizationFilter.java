@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,6 +19,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * JWT 토큰을 검증하고, 인증 정보를 SecurityContext에 설정하는 필터
+ * 로그인을 제외한 모든 요청에 대해 필터가 실행
+ * JWT에서 정보를 추출하여 Authentication 객체를 생성하고 SecurityContext에 저장
+ */
 @Slf4j(topic = "JWT 검증 및 인가")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -31,7 +37,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
-
+        if ("/users/signIn".equals(req.getRequestURI()) && "POST".equals(req.getMethod())) {
+            filterChain.doFilter(req, res);
+            return;
+        }
         //순수 토큰 가져오기
         String tokenValue = jwtUtil.getJwtFromHeader(req);
 

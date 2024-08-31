@@ -29,4 +29,6 @@ public class UserRequestDto {
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,15}$",
             message = "비밀번호는 영문, 숫자, 특수문자를 포함하여 8자 이상 15자 이내여야 합니다.")
     private String password;
+
+    private UserRoleEnum role;
 }
