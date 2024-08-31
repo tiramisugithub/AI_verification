@@ -29,8 +29,6 @@ public class Payment extends Timestamped {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    private Boolean isDeleted;
-
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
