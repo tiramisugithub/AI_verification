@@ -57,6 +57,15 @@ public class ReviewService {
                 .toList();
     }
 
+    public List<ReviewResponseDto.Get> getReview(User user) {
+        if(user.getRole() == UserRoleEnum.CUSTOMER) {
+            throw new RestApiException(ReviewErrorCode.UNAUTHORIZED_USER);
+        }
+        return reviewRepository.findAll().stream()
+                .map(ReviewResponseDto.Get::of)
+                .toList();
+    }
+
     public ReviewResponseDto.CreateReport createReport(User user, ReviewRequestDto.CreateReport requestDto) {
         if (user.getRole() != UserRoleEnum.CUSTOMER) {
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);

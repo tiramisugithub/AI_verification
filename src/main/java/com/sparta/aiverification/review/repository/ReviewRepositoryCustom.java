@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface ReviewRepositoryCustom {
 
     List<Review> findAllByStoreId(UUID storeId);
+
+    List<Review> findAll();
 }

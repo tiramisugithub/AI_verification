@@ -6,6 +6,7 @@ import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.util.UUID;
@@ -38,6 +39,7 @@ public class Review extends Timestamped {
     private String reviewDesc;
 
     @Max(5)
+    @Min(1)
     private Integer score;
 
     private Boolean isReported;

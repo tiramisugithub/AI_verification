@@ -25,4 +25,13 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                         review.isReported.eq(false))
                 .fetch();
     }
+
+    @Override
+    public List<Review> findAll() {
+        return queryFactory
+                .selectFrom(review)
+                .where(review.isDeleted.eq(false),
+                        review.isReported.eq(false))
+                .fetch();
+    }
 }
