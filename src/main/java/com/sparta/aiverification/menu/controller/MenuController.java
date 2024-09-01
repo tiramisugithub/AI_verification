@@ -3,6 +3,7 @@ package com.sparta.aiverification.menu.controller;
 import com.sparta.aiverification.menu.dto.MenuRequestDto;
 import com.sparta.aiverification.menu.dto.MenuResponseDto;
 import com.sparta.aiverification.menu.service.MenuService;
+import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,16 @@ public class MenuController{
 
     // 응답 반환
     return ResponseEntity.ok("Description generated and saved successfully.");
+  }
+
+  @GetMapping("/")
+  public Page<Store> searchMenus(
+      @RequestParam(value = "q", required = false) String keyword,
+      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "size", defaultValue = "10") int size,
+      @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+      @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc) {
+    return menuService.searchMenus(keyword, page, size, sortBy, isAsc);
   }
 
 }

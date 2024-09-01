@@ -203,4 +203,15 @@ public class MenuService {
     return menuRepository.findById(menuId).orElseThrow(()
         -> new RestApiException(MenuErrorCode.NOT_FOUND_MENU));
   }
+
+  public Page<Menu> searchMenus(String keyword, int page, int size, String sortBy, boolean isAsc) {
+    Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+    Sort sort = Sort.by(direction, sortBy);
+    Pageable pageable = PageRequest.of(page, size, sort);
+
+    Page<Menu> menuList;
+    menuList = menuRepository.searchMenus(keyword, pageable);
+
+    return menuList;
+  }
 }
