@@ -115,7 +115,7 @@ public class StoreController {
   public Page<Store> searchStores(
       @RequestParam(value = "region") Long regionId,
       @RequestParam(value = "category") Long categoryId,
-      @RequestParam(required = false) String keyword,
+      @RequestParam(value = "q", required = false) String keyword,
       @RequestParam(value = "page", defaultValue = "0") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
