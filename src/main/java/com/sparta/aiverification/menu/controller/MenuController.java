@@ -2,8 +2,8 @@ package com.sparta.aiverification.menu.controller;
 
 import com.sparta.aiverification.menu.dto.MenuRequestDto;
 import com.sparta.aiverification.menu.dto.MenuResponseDto;
+import com.sparta.aiverification.menu.entity.Menu;
 import com.sparta.aiverification.menu.service.MenuService;
-import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,7 @@ public class MenuController{
   }
 
   @GetMapping("/")
-  public Page<Store> searchMenus(
+  public Page<Menu> searchMenus(
       @RequestParam(value = "q", required = false) String keyword,
       @RequestParam(value = "page", defaultValue = "0") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
