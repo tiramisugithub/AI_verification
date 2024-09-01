@@ -30,4 +30,24 @@ public class ReviewResponseDto {
     }
 
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Get {
+
+        private UUID reviewId;
+
+        private String reviewDesc;
+
+        private Integer score;
+
+        public static Get of(Review review){
+            return Get.builder()
+                    .reviewId(review.getId())
+                    .reviewDesc(review.getReviewDesc())
+                    .score(review.getScore())
+                    .build();
+        }
+    }
 }

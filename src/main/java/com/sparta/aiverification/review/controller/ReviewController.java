@@ -7,10 +7,10 @@ import com.sparta.aiverification.review.service.ReviewService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/review")
@@ -25,4 +25,12 @@ public class ReviewController {
             @RequestBody ReviewRequestDto.Create requestDto) {
         return RestApiResponse.success(reviewService.createReview(userDetails.getUser(), requestDto));
     }
+
+    // StoreId를 통한 조회
+    @GetMapping("/{storeId}")
+    public RestApiResponse<List<ReviewResponseDto.Get>> getReviewByStoreId(
+            @PathVariable UUID storeId) {
+        return RestApiResponse.success(reviewService.getReviewByStoreId(storeId));
+    }
+
 }
