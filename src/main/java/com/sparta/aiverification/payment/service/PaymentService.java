@@ -1,7 +1,7 @@
 package com.sparta.aiverification.payment.service;
 
 import com.sparta.aiverification.common.RestApiException;
-import com.sparta.aiverification.order.entity.Order;
+import com.sparta.aiverification.order.entity.Orders;
 import com.sparta.aiverification.order.entity.OrderPaymentState;
 import com.sparta.aiverification.order.service.OrderService;
 import com.sparta.aiverification.payment.dto.PaymentErrorCode;
@@ -11,7 +11,6 @@ import com.sparta.aiverification.payment.entity.Payment;
 import com.sparta.aiverification.payment.entity.PaymentMethod;
 import com.sparta.aiverification.payment.repository.PaymentRepository;
 import com.sparta.aiverification.user.entity.User;
-import com.sparta.aiverification.user.enums.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +32,13 @@ public class PaymentService {
 //            throw new RestApiException(PaymentErrorCode.UNAUTHORIZED_USER);
         if (requestDto.getPaymentMethod() != PaymentMethod.CARD)
             throw new RestApiException(PaymentErrorCode.BAD_METHOD_PAYMENT);
-        Order order = orderService.findById(requestDto.getOrderId());
-        order.updateOrderPaymentState(OrderPaymentState.COMPLETED);
+        Orders orders = orderService.findById(requestDto.getOrderId());
+        orders.updateOrderPaymentState(OrderPaymentState.COMPLETED);
         return PaymentResponseDto.Create.of(paymentRepository.save(
                 Payment.builder()
                         .user(user)
                         .paymentMethod(requestDto.getPaymentMethod())
-                        .order(orderService.findById(requestDto.getOrderId()))
+                        .orders(orderService.findById(requestDto.getOrderId()))
                         .build()
         ));
     }

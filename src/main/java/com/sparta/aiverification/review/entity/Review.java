@@ -1,7 +1,7 @@
 package com.sparta.aiverification.review.entity;
 
 import com.sparta.aiverification.Timestamped;
-import com.sparta.aiverification.order.entity.Order;
+import com.sparta.aiverification.order.entity.Orders;
 import com.sparta.aiverification.review.dto.ReviewRequestDto;
 import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.user.entity.User;
@@ -31,7 +31,7 @@ public class Review extends Timestamped {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private Order order;
+    private Orders orders;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")

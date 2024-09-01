@@ -37,7 +37,7 @@ public class PaymentResponseDto {
         public static Get of(Payment payment) {
             return Get.builder()
                     .paymentId(payment.getId())
-                    .totalPrice(payment.getOrder().getTotalPrice())
+                    .totalPrice(payment.getOrders().getTotalPrice())
                     .paymentMethod(payment.getPaymentMethod())
                     .build();
         }

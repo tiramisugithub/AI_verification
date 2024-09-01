@@ -1,6 +1,6 @@
 package com.sparta.aiverification.order.dto;
 
-import com.sparta.aiverification.order.entity.Order;
+import com.sparta.aiverification.order.entity.Orders;
 import com.sparta.aiverification.ordermenu.dto.OrderMenuResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,10 +23,10 @@ public class OrderResponseDto {
 
         private String details;
 
-        public static Create of(Order order){
+        public static Create of(Orders orders){
             return Create.builder()
-                    .orderId(order.getId())
-                    .details(order.getDetail())
+                    .orderId(orders.getId())
+                    .details(orders.getDetail())
                     .build();
         }
     }
@@ -44,12 +44,12 @@ public class OrderResponseDto {
         private Integer totalPrice;
 
         private String details;
-        public static Get of(Order order){
+        public static Get of(Orders orders){
             return Get.builder()
-                    .orderId(order.getId())
-                    .menuList(order.getOrderMenuList().stream().map(OrderMenuResponseDto.GetByOrder::of).toList())
-                    .totalPrice(order.getTotalPrice())
-                    .details(order.getDetail())
+                    .orderId(orders.getId())
+                    .menuList(orders.getOrderMenuList().stream().map(OrderMenuResponseDto.GetByOrder::of).toList())
+                    .totalPrice(orders.getTotalPrice())
+                    .details(orders.getDetail())
                     .build();
         }
     }
@@ -65,11 +65,11 @@ public class OrderResponseDto {
         private Integer totalPrice;
 
         private String details;
-        public static Update of(Order order){
+        public static Update of(Orders orders){
             return Update.builder()
-                    .orderId(order.getId())
-                    .totalPrice(order.getTotalPrice())
-                    .details(order.getDetail())
+                    .orderId(orders.getId())
+                    .totalPrice(orders.getTotalPrice())
+                    .details(orders.getDetail())
                     .build();
         }
     }
@@ -84,10 +84,10 @@ public class OrderResponseDto {
 
         private Long deletedBy;
 
-        public static Delete of(Order order){
+        public static Delete of(Orders orders){
             return Delete.builder()
-                    .deletedAt(order.getDeletedAt())
-                    .deletedBy(order.getDeletedBy())
+                    .deletedAt(orders.getDeletedAt())
+                    .deletedBy(orders.getDeletedBy())
                     .build();
         }
     }

@@ -20,7 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "p_order")
-public class Order extends Timestamped {
+public class Orders extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,11 +35,8 @@ public class Order extends Timestamped {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderMenu> orderMenuList = new ArrayList<>();
-
-    @OneToOne(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private Payment payment;
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderMenu> orderMenuList;
 
     private String detail;
 
@@ -47,7 +44,7 @@ public class Order extends Timestamped {
 
     private String deliveryAddress;
 
-    private Boolean isDeleted = false;
+    private Boolean isDeleted;
 
     @Enumerated(EnumType.STRING)
     private OrderPaymentState orderPaymentState;

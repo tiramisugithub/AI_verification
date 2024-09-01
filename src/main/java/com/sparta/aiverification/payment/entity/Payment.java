@@ -1,7 +1,7 @@
 package com.sparta.aiverification.payment.entity;
 
 import com.sparta.aiverification.Timestamped;
-import com.sparta.aiverification.order.entity.Order;
+import com.sparta.aiverification.order.entity.Orders;
 import com.sparta.aiverification.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,7 +27,7 @@ public class Payment extends Timestamped {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private Order order;
+    private Orders orders;
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;

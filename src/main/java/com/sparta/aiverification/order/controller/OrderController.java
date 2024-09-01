@@ -7,10 +7,13 @@ import com.sparta.aiverification.order.service.OrderService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,24 +40,27 @@ public class OrderController {
 
     // 주문 전체 조회
     @GetMapping
-    public RestApiResponse<List<OrderResponseDto.Get>> getOrders(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return RestApiResponse.success(orderService.getOrders(userDetails.getUser()));
+    public RestApiResponse<Page<OrderResponseDto.Get>> getOrders(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        return RestApiResponse.success(orderService.getOrders(pageable, userDetails.getUser()));
     }
 
     // 해당 유저에 대한 전체 조회
     @GetMapping("/user")
-    public RestApiResponse<List<OrderResponseDto.Get>> getOrdersByUser(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return RestApiResponse.success(orderService.getOrdersByUser(userDetails.getUser()));
+    public RestApiResponse<Page<OrderResponseDto.Get>> getOrdersByUser(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        return RestApiResponse.success(orderService.getOrdersByUser(userDetails.getUser(), pageable));
     }
 
     // 해당 가게에 대한 전체 조회
     @GetMapping("/store/{storeId}")
-    public RestApiResponse<List<OrderResponseDto.Get>> getOrdersByStore(
+    public RestApiResponse<Page<OrderResponseDto.Get>> getOrdersByStore(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable UUID storeId) {
-        return RestApiResponse.success(orderService.getOrdersByStore(userDetails.getUser(), storeId));
+            @PathVariable UUID storeId,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        return RestApiResponse.success(orderService.getOrdersByStore(userDetails.getUser(), storeId, pageable));
     }
 
     // 요구사항 수정
