@@ -1,6 +1,5 @@
 package com.sparta.aiverification.review.dto;
 
-import com.sparta.aiverification.review.entity.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

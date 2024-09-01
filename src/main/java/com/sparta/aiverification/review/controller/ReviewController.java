@@ -46,4 +46,11 @@ public class ReviewController {
         return RestApiResponse.success(reviewService.createReport(userDetails.getUser(), requestDto));
     }
 
+    @DeleteMapping("/{reviewId}")
+    public RestApiResponse<ReviewResponseDto.Delete> deleteReview(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID reviewId) {
+        return RestApiResponse.success(reviewService.deleteReview(userDetails.getUser(), reviewId));
+    }
+
 }

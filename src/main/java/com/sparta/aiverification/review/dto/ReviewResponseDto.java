@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class ReviewResponseDto {
@@ -65,6 +66,27 @@ public class ReviewResponseDto {
             return CreateReport.builder()
                     .orderId(review.getOrder().getId())
                     .report(review.getReport())
+                    .build();
+        }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Delete {
+
+        private LocalDateTime deletedAt;
+
+        private Long deleteBy;
+
+        private UUID reviewId;
+
+        public static Delete of(Review review){
+            return Delete.builder()
+                    .deletedAt(review.getDeletedAt())
+                    .deleteBy(review.getDeletedBy())
+                    .reviewId(review.getId())
                     .build();
         }
     }

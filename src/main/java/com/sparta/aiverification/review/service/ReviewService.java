@@ -80,4 +80,21 @@ public class ReviewService {
                         .report(requestDto.getReport())
                         .build()));
     }
+
+    @Transactional
+    public ReviewResponseDto.Delete deleteReview(User user, UUID reviewId) {
+        if(user.getRole() == UserRoleEnum.OWNER){
+            throw new RestApiException(ReviewErrorCode.UNAUTHORIZED_USER);
+        }
+        Review review = findById(reviewId);
+        if(!review.getUser().getId().equals(user.getId())){
+            throw new RestApiException(ReviewErrorCode.BAD_REQUEST_REVIEW);
+        }
+        review.updateDelete(user.getId());
+        return ReviewResponseDto.Delete.of(review);
+    }
+
+    public Review findById(UUID reviewId){
+        return reviewRepository.findByReviewId(reviewId);
+    }
 }

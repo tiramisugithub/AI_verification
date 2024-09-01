@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ReviewErrorCode implements ErrorCode {
-    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "This Role is No Permission");
+    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "This Role is No Permission"),
+    BAD_REQUEST_REVIEW(HttpStatus.BAD_REQUEST, "This Review is not matched current user");
 
     private final HttpStatus httpStatus;
     private final String message;

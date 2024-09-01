@@ -47,4 +47,10 @@ public class Review extends Timestamped {
     private String report;
 
     private Boolean isDeleted;
+
+    public void updateDelete(Long userId){
+        this.delete(userId);
+
+        this.isDeleted = true;
+    }
 }

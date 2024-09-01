@@ -10,4 +10,6 @@ public interface ReviewRepositoryCustom {
     List<Review> findAllByStoreId(UUID storeId);
 
     List<Review> findAll();
+
+    Review findByReviewId(UUID reviewId);
 }

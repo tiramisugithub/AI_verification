@@ -34,4 +34,15 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                         review.isReported.eq(false))
                 .fetch();
     }
+
+    @Override
+    public Review findByReviewId(UUID reviewId) {
+        return queryFactory
+                .selectFrom(review)
+                .where(review.id.eq(reviewId),
+                        review.isDeleted.eq(false),
+                        review.isReported.eq(false))
+                .fetchOne();
+    }
+
 }
