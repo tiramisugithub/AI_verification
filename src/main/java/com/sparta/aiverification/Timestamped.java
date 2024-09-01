@@ -32,7 +32,6 @@ public abstract class Timestamped {
   private LocalDateTime updatedAt;
 
   @LastModifiedBy
-  @Column(updatable = false)
   private Long updatedBy;
 
 
@@ -40,7 +39,6 @@ public abstract class Timestamped {
   @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime deletedAt;
 
-  @Column(updatable = false)
   private Long deletedBy;
 
   // 소프트 삭제 메서드

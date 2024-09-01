@@ -53,4 +53,11 @@ public class ReviewController {
         return RestApiResponse.success(reviewService.deleteReview(userDetails.getUser(), reviewId));
     }
 
+    @PatchMapping
+    public RestApiResponse<ReviewResponseDto.Update> updateReview(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody ReviewRequestDto.Update requestDto) {
+        return RestApiResponse.success(reviewService.updateReview(userDetails.getUser(), requestDto));
+    }
+
 }

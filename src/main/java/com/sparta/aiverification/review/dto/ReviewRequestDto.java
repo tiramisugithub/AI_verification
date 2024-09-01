@@ -32,4 +32,17 @@ public class ReviewRequestDto {
 
         private String report;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Update {
+
+        private UUID reviewId;
+
+        private String reviewDesc;
+
+        private Integer score;
+    }
 }

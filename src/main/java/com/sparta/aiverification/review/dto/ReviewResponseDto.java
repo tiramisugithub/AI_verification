@@ -18,12 +18,15 @@ public class ReviewResponseDto {
     @AllArgsConstructor
     public static class Create{
 
+        private UUID reviewId;
+
         private String desc;
 
         private Integer score;
 
         public static Create of(Review review) {
             return Create.builder()
+                    .reviewId(review.getId())
                     .desc(review.getReviewDesc())
                     .score(review.getScore())
                     .build();
@@ -89,5 +92,27 @@ public class ReviewResponseDto {
                     .reviewId(review.getId())
                     .build();
         }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Update {
+
+        private UUID reviewId;
+        private Long userId;
+        private Integer score;
+        private String reviewDesc;
+
+        public static Update of(Review review) {
+            return Update.builder()
+                    .reviewId(review.getId())
+                    .userId(review.getUser().getId())
+                    .score(review.getScore())
+                    .reviewDesc(review.getReviewDesc())
+                    .build();
+        }
+
     }
 }

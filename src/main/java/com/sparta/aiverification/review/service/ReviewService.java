@@ -94,7 +94,20 @@ public class ReviewService {
         return ReviewResponseDto.Delete.of(review);
     }
 
+    @Transactional
+    public ReviewResponseDto.Update updateReview(User user, ReviewRequestDto.Update requestDto) {
+        if (user.getRole() == UserRoleEnum.OWNER) {
+            throw new RestApiException(ReviewErrorCode.UNAUTHORIZED_USER);
+        }
+        Review review = findById(requestDto.getReviewId());
+        if(!review.getUser().getId().equals(user.getId())){
+            throw new RestApiException(ReviewErrorCode.BAD_REQUEST_REVIEW);
+        }
+        review.updateReview(requestDto);
+        return ReviewResponseDto.Update.of(review);
+    }
     public Review findById(UUID reviewId){
         return reviewRepository.findByReviewId(reviewId);
     }
+
 }

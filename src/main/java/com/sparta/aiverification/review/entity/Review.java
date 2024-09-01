@@ -2,6 +2,7 @@ package com.sparta.aiverification.review.entity;
 
 import com.sparta.aiverification.Timestamped;
 import com.sparta.aiverification.order.entity.Order;
+import com.sparta.aiverification.review.dto.ReviewRequestDto;
 import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.user.entity.User;
 import jakarta.persistence.*;
@@ -52,5 +53,10 @@ public class Review extends Timestamped {
         this.delete(userId);
 
         this.isDeleted = true;
+    }
+
+    public void updateReview(ReviewRequestDto.Update requestDto) {
+        this.reviewDesc = requestDto.getReviewDesc();
+        this.score = requestDto.getScore();
     }
 }
