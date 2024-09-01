@@ -4,6 +4,7 @@ import com.sparta.aiverification.menu.dto.MenuResponseDto;
 import com.sparta.aiverification.menu.service.MenuService;
 import com.sparta.aiverification.store.dto.StoreRequestDto;
 import com.sparta.aiverification.store.dto.StoreResponseDto;
+import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.store.service.StoreService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import java.util.UUID;
@@ -106,5 +107,19 @@ public class StoreController {
   public ResponseEntity<String> deleteStore(@PathVariable("storeId") UUID storeId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
     storeService.deleteStoreAndMenus(storeId, userDetailsImpl.getUser());
     return ResponseEntity.ok("Store and its menus deleted successfully.");
+  }
+
+  // 6. 가게 검색
+
+  @GetMapping("/search")
+  public Page<Store> searchStores(
+      @RequestParam(value = "region") Long regionId,
+      @RequestParam(value = "category") Long categoryId,
+      @RequestParam(required = false) String keyword,
+      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "size", defaultValue = "10") int size,
+      @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+      @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc) {
+    return storeService.searchStores(regionId, categoryId, keyword, page, size, sortBy, isAsc);
   }
 }
