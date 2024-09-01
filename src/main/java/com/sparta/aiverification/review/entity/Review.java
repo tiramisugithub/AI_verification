@@ -1,0 +1,40 @@
+package com.sparta.aiverification.review.entity;
+
+import com.sparta.aiverification.Timestamped;
+import com.sparta.aiverification.order.entity.Order;
+import com.sparta.aiverification.user.entity.User;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.UUID;
+
+@Entity
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Table(name = "p_review")
+public class Review extends Timestamped {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "review_id")
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    private String reviewDesc;
+
+    private Integer score;
+
+    private Boolean isReported;
+
+    private String report;
+
+}
