@@ -22,8 +22,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
     List<Store> results = queryFactory
         .selectFrom(store)
-        .where(store.regionId.eq(regionId)
-            .and(store.categoryId.eq(categoryId))
+        .where(store.region.id.eq(regionId)
+            .and(store.category.id.eq(categoryId))
             .and(keyword != null ? store.name.containsIgnoreCase(keyword)
                 .or(store.description.containsIgnoreCase(keyword)) : null))
         .offset(pageable.getOffset())
@@ -32,8 +32,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
     long total = queryFactory
         .selectFrom(store)
-        .where(store.regionId.eq(regionId)
-            .and(store.categoryId.eq(categoryId))
+        .where(store.region.id.eq(regionId)
+            .and(store.category.id.eq(categoryId))
             .and(keyword != null ? store.name.containsIgnoreCase(keyword)
                 .or(store.description.containsIgnoreCase(keyword)) : null))
         .fetchCount();
