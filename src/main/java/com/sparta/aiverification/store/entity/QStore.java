@@ -10,11 +10,9 @@ import com.querydsl.core.types.dsl.StringPath;
 
 public class QStore extends EntityPathBase<Store> {
 
-  private static final long serialVersionUID = 1L;
-
   public static final QStore store = new QStore("store");
 
-  public final NumberPath<Long> id = createNumber("id", Long.class);
+  public final StringPath id = createString("id");
   public final StringPath name = createString("name");
   public final NumberPath<Long> regionId = createNumber("regionId", Long.class);
   public final NumberPath<Long> categoryId = createNumber("categoryId", Long.class);
