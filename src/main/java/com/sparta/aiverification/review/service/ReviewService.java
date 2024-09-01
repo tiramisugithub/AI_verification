@@ -32,7 +32,7 @@ public class ReviewService {
         Order order = orderService.findById(requestDto.getOrderId());
         Store store = order.getStore();
 
-        if(user.getRole() == UserRoleEnum.OWNER){
+        if (user.getRole() == UserRoleEnum.OWNER) {
             throw new RestApiException(ReviewErrorCode.UNAUTHORIZED_USER);
         }
         if (!order.getUser().getId().equals(user.getId())) {
@@ -54,5 +54,20 @@ public class ReviewService {
         return reviewRepository.findAllByStoreId(storeId).stream()
                 .map(ReviewResponseDto.Get::of)
                 .toList();
+    }
+
+    public ReviewResponseDto.CreateReport createReport(User user, ReviewRequestDto.CreateReport requestDto) {
+        if (user.getRole() != UserRoleEnum.CUSTOMER) {
+            throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
+        }
+        Order order = orderService.findById(requestDto.getOrderId());
+        return ReviewResponseDto.CreateReport.of(reviewRepository.save(
+                Review.builder()
+                        .order(order)
+                        .user(user)
+                        .store(order.getStore())
+                        .isReported(true)
+                        .report(requestDto.getReport())
+                        .build()));
     }
 }

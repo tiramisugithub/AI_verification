@@ -22,4 +22,15 @@ public class ReviewRequestDto {
 
         private Integer score;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateReport{
+
+        private UUID orderId;
+
+        private String report;
+    }
 }

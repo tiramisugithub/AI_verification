@@ -50,4 +50,22 @@ public class ReviewResponseDto {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateReport {
+
+        private UUID orderId;
+
+        private String report;
+
+        public static CreateReport of(Review review){
+            return CreateReport.builder()
+                    .orderId(review.getOrder().getId())
+                    .report(review.getReport())
+                    .build();
+        }
+    }
 }

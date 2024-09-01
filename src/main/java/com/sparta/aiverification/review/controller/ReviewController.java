@@ -33,4 +33,10 @@ public class ReviewController {
         return RestApiResponse.success(reviewService.getReviewByStoreId(storeId));
     }
 
+    @PostMapping("/report")
+    public RestApiResponse<ReviewResponseDto.CreateReport> createReport(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody ReviewRequestDto.CreateReport requestDto) {
+        return RestApiResponse.success(reviewService.createReport(userDetails.getUser(), requestDto));
+    }
 }
