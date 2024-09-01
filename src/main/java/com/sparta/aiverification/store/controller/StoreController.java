@@ -111,7 +111,7 @@ public class StoreController {
 
   // 6. 가게 검색
 
-  @GetMapping("/search")
+  @GetMapping("/")
   public Page<Store> searchStores(
       @RequestParam(value = "region") Long regionId,
       @RequestParam(value = "category") Long categoryId,
