@@ -39,4 +39,5 @@ public class ReviewController {
             @RequestBody ReviewRequestDto.CreateReport requestDto) {
         return RestApiResponse.success(reviewService.createReport(userDetails.getUser(), requestDto));
     }
+
 }

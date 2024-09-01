@@ -44,6 +44,7 @@ public class ReviewService {
                         .user(user)
                         .order(order)
                         .store(store)
+                        .isDeleted(false)
                         .reviewDesc(requestDto.getReviewDesc())
                         .isReported(false)
                         .build()
