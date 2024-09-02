@@ -197,10 +197,10 @@ public class StoreService {
   }
 
 
-  public Page<Store> searchStores(Long regionId, Long categoryId, String keyword, int page, int size, String sortBy, boolean isAsc) {
+  public Page<StoreResponseDto> searchStores(Long regionId, Long categoryId, String keyword, int page, int size, String sortBy, boolean isAsc) {
 
     Pageable pageable = getPageable(isAsc, page,size, sortBy);
-    Page<Store> storeList;
+    Page<StoreResponseDto> storeList;
     storeList = storeRepository.searchStores(regionId, categoryId, keyword, pageable);
 
     return storeList;

@@ -2,7 +2,6 @@ package com.sparta.aiverification.menu.controller;
 
 import com.sparta.aiverification.menu.dto.MenuRequestDto;
 import com.sparta.aiverification.menu.dto.MenuResponseDto;
-import com.sparta.aiverification.menu.entity.Menu;
 import com.sparta.aiverification.menu.service.MenuService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import java.util.UUID;
@@ -79,7 +78,7 @@ public class MenuController{
   }
 
   @GetMapping("/search")
-  public Page<Menu> searchMenus(
+  public Page<MenuResponseDto> searchMenus(
       @RequestParam(value = "q", required = false) String keyword,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,

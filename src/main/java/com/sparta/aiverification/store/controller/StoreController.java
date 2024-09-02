@@ -4,7 +4,6 @@ import com.sparta.aiverification.menu.dto.MenuResponseDto;
 import com.sparta.aiverification.menu.service.MenuService;
 import com.sparta.aiverification.store.dto.StoreRequestDto;
 import com.sparta.aiverification.store.dto.StoreResponseDto;
-import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.store.service.StoreService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import java.util.UUID;
@@ -112,7 +111,7 @@ public class StoreController {
   // 6. 가게 검색
 
   @GetMapping("/search")
-  public Page<Store> searchStores(
+  public Page<StoreResponseDto> searchStores(
       @RequestParam(value = "region") Long regionId,
       @RequestParam(value = "category") Long categoryId,
       @RequestParam(value = "q", required = false) String keyword,
