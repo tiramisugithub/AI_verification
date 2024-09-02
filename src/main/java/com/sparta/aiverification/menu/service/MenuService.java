@@ -52,11 +52,11 @@ public class MenuService {
     Store store = storeRepository.findById(menuRequestDto.getStoreId())
         .orElseThrow(() -> new RuntimeException("Store not found"));
 
+    log.info("접근자 권한 : " + user.getRole());
+    log.info("접근 유저 id : " + user.getId() + " 가게 주인 id " + store.getUserId());
+
     // 헤딩 가게 주인인지 확인
     if(user.getRole() != UserRoleEnum.OWNER || !user.getId().equals(store.getUserId())){
-      log.info("접근자 권한 : " + user.getRole());
-      log.info("접근 유저 id : " + user.getId() + " 가게 주인 id " + store.getUserId());
-
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
     }
 
@@ -133,10 +133,12 @@ public class MenuService {
     Store store = storeRepository.findById(menuRequestDto.getStoreId())
         .orElseThrow(() -> new RuntimeException("Store not found"));
 
-    // 헤딩 가게 주인인지 확인
-    if(user.getRole() == UserRoleEnum.OWNER && user.getId() != store.getUserId() ){
-      log.info("접근자 권한 : " + user.getRole());
 
+    log.info("접근자 권한 : " + user.getRole());
+    log.info("접근 유저 id : " + user.getId() + " 가게 주인 id " + store.getUserId());
+
+    // 헤딩 가게 주인인지 확인
+    if(user.getRole() != UserRoleEnum.OWNER || !user.getId().equals(store.getUserId())){
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
     }
 
@@ -152,6 +154,7 @@ public class MenuService {
   public void deleteMenu(UUID menuId, User user) {
     // validation
     isNotCustomer(user);
+
 
     Menu menu = menuRepository.findById(menuId)
         .orElseThrow(() -> new RuntimeException("Menu not found"));
