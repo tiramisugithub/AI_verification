@@ -38,6 +38,7 @@ public class MenuService {
   private static void isNotCustomer(User user) {
     // validation
     if (user.getRole() == UserRoleEnum.CUSTOMER) {
+      log.info("접근자 권한 : " + user.getRole());
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
     }
   }
@@ -52,7 +53,10 @@ public class MenuService {
         .orElseThrow(() -> new RuntimeException("Store not found"));
 
     // 헤딩 가게 주인인지 확인
-    if(user.getRole() == UserRoleEnum.OWNER && user.getId() != store.getUserId() ){
+    if(user.getRole() != UserRoleEnum.OWNER || !user.getId().equals(store.getUserId())){
+      log.info("접근자 권한 : " + user.getRole());
+      log.info("접근 유저 id : " + user.getId() + " 가게 주인 id " + store.getUserId());
+
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
     }
 
@@ -95,6 +99,8 @@ public class MenuService {
     // 모두 조회 가능
     Page<Menu> menuList;
     if(user.getRole() == UserRoleEnum.CUSTOMER){
+      log.info("접근자 권한 : " + user.getRole());
+
       menuList = menuRepository.findMenusByStoreAndStatus(storeId, true, pageable);
     }
     else{
@@ -110,6 +116,8 @@ public class MenuService {
         .orElseThrow(() -> new RuntimeException("Menu not found"));
 
     if(user.getRole() == UserRoleEnum.CUSTOMER && menu.getStatus() == false){
+      log.info("접근자 권한 : " + user.getRole());
+
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
     }
 
@@ -127,6 +135,8 @@ public class MenuService {
 
     // 헤딩 가게 주인인지 확인
     if(user.getRole() == UserRoleEnum.OWNER && user.getId() != store.getUserId() ){
+      log.info("접근자 권한 : " + user.getRole());
+
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
     }
 
