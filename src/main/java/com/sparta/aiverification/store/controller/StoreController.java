@@ -6,20 +6,13 @@ import com.sparta.aiverification.store.dto.StoreRequestDto;
 import com.sparta.aiverification.store.dto.StoreResponseDto;
 import com.sparta.aiverification.store.service.StoreService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/stores")
@@ -36,13 +29,13 @@ public class StoreController {
 
   // 0. 가게 생성
   @PostMapping
-  public StoreResponseDto createStore(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody StoreRequestDto storeRequestDto) {
+  public StoreResponseDto.Default createStore(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody StoreRequestDto storeRequestDto) {
     return storeService.createStore(userDetailsImpl.getUser(), storeRequestDto);
   }
 
   // 1.1 가게 목록 조회
   @GetMapping
-  public Page<StoreResponseDto> getAllStores(
+  public Page<StoreResponseDto.Get> getAllStores(
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
@@ -54,7 +47,7 @@ public class StoreController {
 
   // 1.2 카테고리별 가게 목록 조회
   @GetMapping("/categories/{categoryId}")
-  public Page<StoreResponseDto> getAllStoresByCategoryId(
+  public Page<StoreResponseDto.Get> getAllStoresByCategoryId(
       @PathVariable("categoryId") Long categoryId,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
@@ -66,7 +59,7 @@ public class StoreController {
 
   // 1.3 지역 별 가게 목록 조회
   @GetMapping("/regions/{regionId}")
-  public Page<StoreResponseDto> getAllStoresByRegionId(
+  public Page<StoreResponseDto.Get> getAllStoresByRegionId(
       @PathVariable("regionId") Long regionId,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
@@ -79,7 +72,7 @@ public class StoreController {
 
   // 2. 가게 정보 조회
   @GetMapping("/{storeId}")
-  public StoreResponseDto getStoreById(@PathVariable("storeId") UUID storeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+  public StoreResponseDto.Default getStoreById(@PathVariable("storeId") UUID storeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
     return storeService.getStoreById(storeId, userDetails.getUser());
   }
 
@@ -97,7 +90,7 @@ public class StoreController {
 
   // 4. 가게 정보 수정
   @PutMapping("/{storeId}")
-  public StoreResponseDto updateStore(@PathVariable("storeId") UUID storeId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody StoreRequestDto storeRequestDto) {
+  public StoreResponseDto.Default updateStore(@PathVariable("storeId") UUID storeId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody StoreRequestDto storeRequestDto) {
     return storeService.updateStore(storeId, userDetailsImpl.getUser(), storeRequestDto);
   }
 
@@ -111,14 +104,14 @@ public class StoreController {
   // 6. 가게 검색
 
   @GetMapping("/search")
-  public Page<StoreResponseDto> searchStores(
+  public Page<StoreResponseDto.Get> searchStores(
       @RequestParam(value = "region") Long regionId,
       @RequestParam(value = "category") Long categoryId,
-      @RequestParam(value = "q", required = false) String keyword,
+      @RequestParam(value = "keyword", required = false) String keyword,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc) {
-    return storeService.searchStores(regionId, categoryId, keyword, page, size, sortBy, isAsc);
+    return storeService.searchStores(regionId, categoryId, keyword, page - 1, size, sortBy, isAsc);
   }
 }

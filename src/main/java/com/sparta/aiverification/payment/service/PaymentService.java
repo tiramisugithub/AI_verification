@@ -31,7 +31,7 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponseDto.Create createPayment(User user, PaymentRequestDto.Create requestDto) {
-        if (user.getRole() == UserRoleEnum.CUSTOMER || user.getRole() == UserRoleEnum.OWNER)
+        if (user.getRole() != UserRoleEnum.CUSTOMER)
             throw new RestApiException(PaymentErrorCode.UNAUTHORIZED_USER);
         if (requestDto.getPaymentMethod() != PaymentMethod.CARD)
             throw new RestApiException(PaymentErrorCode.BAD_METHOD_PAYMENT);
