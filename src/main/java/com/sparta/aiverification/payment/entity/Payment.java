@@ -32,4 +32,6 @@ public class Payment extends Timestamped {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
+    private Boolean isDeleted;
+
 }
