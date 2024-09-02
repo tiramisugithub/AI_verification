@@ -40,7 +40,7 @@ public class MenuController{
   // 2. 메뉴 목록 조회
   @GetMapping
   public Page<MenuResponseDto> getAllMenus(
-      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
@@ -77,6 +77,16 @@ public class MenuController{
     menuService.generatMenuDescription(menuId, userDetailsImpl.getUser());
     // 응답 반환
     return ResponseEntity.ok("Description generated and saved successfully.");
+  }
+
+  @GetMapping("/search")
+  public Page<MenuResponseDto> searchMenus(
+      @RequestParam(value = "q", required = false) String keyword,
+      @RequestParam(value = "page", defaultValue = "1") int page,
+      @RequestParam(value = "size", defaultValue = "10") int size,
+      @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+      @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc) {
+    return menuService.searchMenus(keyword, page, size, sortBy, isAsc);
   }
 
 }

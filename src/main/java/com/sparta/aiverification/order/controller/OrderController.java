@@ -23,52 +23,52 @@ public class OrderController {
 
     @PostMapping
     public RestApiResponse<OrderResponseDto.Create> createOrder(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody OrderRequestDto.Create requestDto) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody OrderRequestDto.Create requestDto) {
         return RestApiResponse.success(orderService.createOrder(userDetails.getUser(), requestDto));
     }
 
     @GetMapping("/{orderId}")
     public RestApiResponse<OrderResponseDto.Get> getOrder(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable UUID orderId) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable UUID orderId) {
         return RestApiResponse.success(orderService.getOrder(userDetails.getUser(), orderId));
     }
 
     // 주문 전체 조회
     @GetMapping
     public RestApiResponse<List<OrderResponseDto.Get>> getOrders(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return RestApiResponse.success(orderService.getOrders(userDetails.getUser()));
     }
 
     // 해당 유저에 대한 전체 조회
     @GetMapping("/user")
     public RestApiResponse<List<OrderResponseDto.Get>> getOrdersByUser(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return RestApiResponse.success(orderService.getOrdersByUser(userDetails.getUser()));
     }
 
     // 해당 가게에 대한 전체 조회
     @GetMapping("/store/{storeId}")
     public RestApiResponse<List<OrderResponseDto.Get>> getOrdersByStore(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable UUID storeId) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable UUID storeId) {
         return RestApiResponse.success(orderService.getOrdersByStore(userDetails.getUser(), storeId));
     }
 
     // 요구사항 수정
     @PatchMapping
     public RestApiResponse<OrderResponseDto.Update> updateOrder(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody OrderRequestDto.Update requestDto) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody OrderRequestDto.Update requestDto) {
         return RestApiResponse.success(orderService.updateOrder(userDetails.getUser(), requestDto));
     }
 
     @DeleteMapping("/{orderId}")
     public RestApiResponse<OrderResponseDto.Delete> deleteOrder(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable UUID orderId) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable UUID orderId) {
         return RestApiResponse.success(orderService.deleteOrder(userDetails.getUser(), orderId));
     }
 

@@ -156,6 +156,10 @@ public class MenuService {
     log.info("접근자 권한 : " + user.getRole());
     log.info("접근 유저 id : " + user.getId() + " 가게 주인 id " + store.getUserId());
 
+
+    log.info("접근자 권한 : " + user.getRole());
+    log.info("접근 유저 id : " + user.getId() + " 가게 주인 id " + store.getUserId());
+
     // 헤딩 가게 주인인지 확인
     if(user.getRole() != UserRoleEnum.OWNER || !user.getId().equals(store.getUserId())){
       throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
@@ -268,4 +272,15 @@ public class MenuService {
         -> new RestApiException(MenuErrorCode.NOT_FOUND_MENU));
   }
 
+  @Transactional
+  public Page<MenuResponseDto> searchMenus(String keyword, int page, int size, String sortBy, boolean isAsc) {
+    Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+    Sort sort = Sort.by(direction, sortBy);
+    Pageable pageable = PageRequest.of(page, size, sort);
+
+    Page<MenuResponseDto> menuList;
+    menuList = menuRepository.searchMenus(keyword, pageable);
+
+    return menuList;
+  }
 }

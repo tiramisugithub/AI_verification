@@ -196,4 +196,13 @@ public class StoreService {
         -> new RestApiException(StoreErrorCode.NOT_FOUND_STORE));
   }
 
+
+  public Page<StoreResponseDto> searchStores(Long regionId, Long categoryId, String keyword, int page, int size, String sortBy, boolean isAsc) {
+
+    Pageable pageable = getPageable(isAsc, page,size, sortBy);
+    Page<StoreResponseDto> storeList;
+    storeList = storeRepository.searchStores(regionId, categoryId, keyword, pageable);
+
+    return storeList;
+  }
 }

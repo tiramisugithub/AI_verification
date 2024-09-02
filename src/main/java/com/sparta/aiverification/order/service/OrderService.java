@@ -48,10 +48,10 @@ public class OrderService {
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
 
         Order order = createEmptyOrder(userService.findById(user.getId())
-                , storeService.findById(requestDto.getStoreId())
-                , requestDto.getDetail()
-                , requestDto.getOrderType()
-                , requestDto.getDeliveryAddress()
+            , storeService.findById(requestDto.getStoreId())
+            , requestDto.getDetail()
+            , requestDto.getOrderType()
+            , requestDto.getDeliveryAddress()
         );
         List<OrderMenuRedis> orderMenuRedisList = orderMenuService.getOrderMenuListByUser(user.getId());
         int totalPrice = 0;
@@ -59,10 +59,10 @@ public class OrderService {
             Menu menu = menuService.findById(orderMenuRedis.getMenuId());
             totalPrice += menu.getPrice() * orderMenuRedis.getQuantity();
             order.addOrderMenu(OrderMenu.builder()
-                    .order(order)
-                    .menu(menu)
-                    .quantity(orderMenuRedis.getQuantity())
-                    .build());
+                .order(order)
+                .menu(menu)
+                .quantity(orderMenuRedis.getQuantity())
+                .build());
         }
         order.updateTotalPrice(totalPrice);
         orderMenuService.deleteOrderMenuListInRedis(orderMenuRedisList);
@@ -83,9 +83,9 @@ public class OrderService {
         if(user.getRole() == UserRoleEnum.CUSTOMER || user.getRole() == UserRoleEnum.OWNER)
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         return orderRepository.findAll()
-                .stream()
-                .map(OrderResponseDto.Get::of)
-                .toList();
+            .stream()
+            .map(OrderResponseDto.Get::of)
+            .toList();
     }
 
 
@@ -93,9 +93,9 @@ public class OrderService {
         if(user.getRole() == UserRoleEnum.OWNER)
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         return orderRepository.findAllByUserId(user.getId())
-                .stream()
-                .map(OrderResponseDto.Get::of)
-                .toList();
+            .stream()
+            .map(OrderResponseDto.Get::of)
+            .toList();
     }
 
 
@@ -104,15 +104,15 @@ public class OrderService {
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         // User가 가지고 있는 Store인지 확인하는 로직 필요
         return orderRepository.findAllByStoreId(storeId)
-                .stream()
-                .map(OrderResponseDto.Get::of)
-                .toList();
+            .stream()
+            .map(OrderResponseDto.Get::of)
+            .toList();
     }
 
 
     @Transactional
     public OrderResponseDto.Update updateOrder(User user
-            ,OrderRequestDto.Update requestDto) {
+        ,OrderRequestDto.Update requestDto) {
         if(user.getRole() != UserRoleEnum.CUSTOMER)
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         Order order = findById(requestDto.getOrderId());
@@ -140,21 +140,21 @@ public class OrderService {
     }
 
     private Order createEmptyOrder(User user,
-                                   Store store,
-                                   String detail,
-                                   OrderType orderType,
-                                   String deliveryAddress) {
+        Store store,
+        String detail,
+        OrderType orderType,
+        String deliveryAddress) {
         List<OrderMenu> orderMenuList = new ArrayList<>();
         return Order.builder()
-                .user(user)
-                .store(store)
-                .orderMenuList(orderMenuList)
-                .detail(detail)
-                .orderType(orderType)
-                .deliveryAddress(deliveryAddress)
-                .orderPaymentState(OrderPaymentState.PENDING)
-                .isDeleted(false)
-                .build();
+            .user(user)
+            .store(store)
+            .orderMenuList(orderMenuList)
+            .detail(detail)
+            .orderType(orderType)
+            .deliveryAddress(deliveryAddress)
+            .orderPaymentState(OrderPaymentState.PENDING)
+            .isDeleted(false)
+            .build();
     }
 
 }
