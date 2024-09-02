@@ -55,21 +55,6 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-// === ⭐ QueryDsl 빌드 옵션 (선택) ===
-def querydslDir = "$buildDir/generated/querydsl"
-
-sourceSets {
-    main.java.srcDirs += [ querydslDir ]
-}
-
-tasks.withType(JavaCompile) {
-    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
-}
-
-clean.doLast {
-    file(querydslDir).deleteDir()
-}
-
 tasks.named('test') {
     useJUnitPlatform()
 }
