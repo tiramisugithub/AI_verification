@@ -49,10 +49,11 @@ public class UserController {
 
     // 사용자 탈퇴
     @DeleteMapping("/delete")
-    public RestApiResponse<String> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        userService.deleteUser(userDetailsImpl.getUser().getId());
+    public RestApiResponse<UserResponseDto.UserDetailResponseDto> deleteUser(
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+        UserResponseDto.UserDetailResponseDto responseDto = userService.deleteUser(userDetailsImpl);
         log.info("탈퇴 요청 사용자 ID : {}", userDetailsImpl.getUser().getId());
-        return RestApiResponse.success("회원 탈퇴 완료");
+        return RestApiResponse.success(responseDto);
     }
 
 

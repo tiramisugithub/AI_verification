@@ -54,6 +54,7 @@ public class OrderService {
                 , requestDto.getDetail()
                 , requestDto.getOrderType()
                 , requestDto.getDeliveryAddress()
+
         );
         List<OrderMenuRedis> orderMenuRedisList = orderMenuService.getOrderMenuListByUser(user.getId());
         int totalPrice = 0;
@@ -84,7 +85,6 @@ public class OrderService {
     public Page<OrderResponseDto.Get> getOrders(Pageable pageable, User user) {
         if(user.getRole() == UserRoleEnum.CUSTOMER || user.getRole() == UserRoleEnum.OWNER)
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
-
         return orderRepository.findAllByCondition(null, null, pageable);
     }
 
@@ -106,7 +106,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto.Update updateOrder(User user
-            ,OrderRequestDto.Update requestDto) {
+        ,OrderRequestDto.Update requestDto) {
         if(user.getRole() != UserRoleEnum.CUSTOMER)
             throw new RestApiException(OrderErrorCode.UNAUTHORIZED_USER);
         Orders orders = findById(requestDto.getOrderId());

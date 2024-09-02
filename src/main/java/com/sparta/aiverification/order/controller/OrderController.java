@@ -26,15 +26,15 @@ public class OrderController {
 
     @PostMapping
     public RestApiResponse<OrderResponseDto.Create> createOrder(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody OrderRequestDto.Create requestDto) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody OrderRequestDto.Create requestDto) {
         return RestApiResponse.success(orderService.createOrder(userDetails.getUser(), requestDto));
     }
 
     @GetMapping("/{orderId}")
     public RestApiResponse<OrderResponseDto.Get> getOrder(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable UUID orderId) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable UUID orderId) {
         return RestApiResponse.success(orderService.getOrder(userDetails.getUser(), orderId));
     }
 
@@ -51,8 +51,7 @@ public class OrderController {
     public RestApiResponse<Page<OrderResponseDto.Get>> getOrdersByUser(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
-        return RestApiResponse.success(orderService.getOrdersByUser(userDetails.getUser(), pageable));
-    }
+        return RestApiResponse.success(orderService.getOrdersByUser(userDetails.getUser(), pageable))
 
     // 해당 가게에 대한 전체 조회
     @GetMapping("/store/{storeId}")
@@ -66,15 +65,15 @@ public class OrderController {
     // 요구사항 수정
     @PatchMapping
     public RestApiResponse<OrderResponseDto.Update> updateOrder(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody OrderRequestDto.Update requestDto) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody OrderRequestDto.Update requestDto) {
         return RestApiResponse.success(orderService.updateOrder(userDetails.getUser(), requestDto));
     }
 
     @DeleteMapping("/{orderId}")
     public RestApiResponse<OrderResponseDto.Delete> deleteOrder(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable UUID orderId) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable UUID orderId) {
         return RestApiResponse.success(orderService.deleteOrder(userDetails.getUser(), orderId));
     }
 

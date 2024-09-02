@@ -68,6 +68,19 @@ public class AdminController {
         return RestApiResponse.success(responseDto);
     }
 
+    @DeleteMapping("/delete/{userId}")
+    public RestApiResponse<UserResponseDto.UserDetailResponseDto> deleteUserById(
+            @PathVariable Long userId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        // AdminService에서 삭제 처리 후 UserDetailResponseDto 반환
+        UserResponseDto.UserDetailResponseDto responseDto = adminService.deleteUser(userDetails,userId);
+
+        return RestApiResponse.success(responseDto);
+    }
+
+
+
     //전체 사용자 목록 조회 (페이지네이션 및 정렬 포함)
     @GetMapping("/users")
     public ResponseEntity<Page<UserResponseDto>> getAllUsers(
@@ -77,10 +90,7 @@ public class AdminController {
             @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(value = "isAsc", defaultValue = "true") boolean isAsc
     ) {
-        // 유효한 페이지 크기 확인 및 기본값 설정 (10, 30, 50 중 하나만 허용)
-        int validSize = (size == 10 || size == 30 || size == 50) ? size : 10;
-
-        Page<UserResponseDto> users = adminService.getAllUsers(page, validSize, sortBy, isAsc);
+        Page<UserResponseDto> users = adminService.getAllUsers(page,size, sortBy, isAsc);
 
         // 조회된 사용자 목록을 ResponseEntity에 담아 HTTP 200 OK 응답으로 반환
         return ResponseEntity.ok(users);

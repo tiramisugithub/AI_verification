@@ -45,6 +45,11 @@ public class User extends Timestamped implements Serializable {
     @Setter
     private UserRoleEnum role;
 
+    // 소프트 삭제 메서드
+    public void softDelete(Long deletedByUserId) {
+        this.delete(deletedByUserId);
+    }
+
 
     public void updateInfo(UserRequestDto userRequestDto) {
         if(userRequestDto.getUsername() != null & !userRequestDto.getUsername().isBlank()){
