@@ -1,54 +1,57 @@
-package com.sparta.aiverification.review.repository;
+package com.sparta.aiverification.order.repository;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.aiverification.order.dto.OrderResponseDto;
-import com.sparta.aiverification.review.dto.ReviewResponseDto;
-import com.sparta.aiverification.review.entity.Review;
+import com.sparta.aiverification.order.entity.Orders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.sparta.aiverification.order.entity.QOrders.orders;
-import static com.sparta.aiverification.review.entity.QReview.review;
 
+@Repository
 @RequiredArgsConstructor
-public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
+public class OrderRepositoryImpl implements OrderRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
 
-
+    // 확장성을 고려하면 추후 수정할 예정
     @Override
-    public Page<ReviewResponseDto.Get> findAllByCondition(Long userId, UUID storeId, Pageable pageable) {
-        List<Review> result = queryFactory
-                .selectFrom(review)
-                .where(userEq(userId),
-                        storeEq(storeId),
-                        review.isDeleted.eq(false),
-                        review.isReported.eq(false))
+    public Page<OrderResponseDto.Get> findAllByCondition(Long userId, UUID storeId, Pageable pageable) {
+        List<Orders> result = queryFactory
+                .selectFrom(orders)
+                .where(userIdEq(userId), storeIdEq(storeId), orders.isDeleted.eq(false))
                 .orderBy(orderSort(pageable))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        JPAQuery<Long> count = queryFactory.select(review.count())
-                .from(review)
-                .where(userEq(userId), storeEq(storeId), orders.isDeleted.eq(false));
+        JPAQuery<Long> count = queryFactory.select(orders.count())
+                .from(orders)
+                .where(userIdEq(userId), storeIdEq(storeId), orders.isDeleted.eq(false));
 
         return PageableExecutionUtils.getPage(result.stream()
-                        .map(ReviewResponseDto.Get::of)
-                        .toList(),
+                .map(OrderResponseDto.Get::of)
+                .toList(),
                 pageable,
                 count::fetchOne);
+    }
+    private BooleanExpression storeIdEq(UUID storeId) {
+        return storeId != null ? orders.store.id.eq(storeId) : null;
+    }
+
+    private BooleanExpression userIdEq(Long userId) {
+        return userId != null ? orders.user.id.eq(userId) : null;
     }
 
     private OrderSpecifier<?> orderSort(Pageable pageable) {
@@ -65,23 +68,4 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         }
         return null;
     }
-
-    private BooleanExpression storeEq(UUID storeId) {
-        return storeId != null ? review.store.id.eq(storeId) : null;
-    }
-
-    private BooleanExpression userEq(Long userId) {
-        return userId != null ? review.user.id.eq(userId) : null;
-    }
-
-    @Override
-    public Review findByReviewId(UUID reviewId) {
-        return queryFactory
-                .selectFrom(review)
-                .where(review.id.eq(reviewId),
-                        review.isDeleted.eq(false),
-                        review.isReported.eq(false))
-                .fetchOne();
-    }
-
 }

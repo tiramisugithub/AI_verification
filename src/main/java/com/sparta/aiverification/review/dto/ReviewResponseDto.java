@@ -67,7 +67,7 @@ public class ReviewResponseDto {
 
         public static CreateReport of(Review review){
             return CreateReport.builder()
-                    .orderId(review.getOrder().getId())
+                    .orderId(review.getOrders().getId())
                     .report(review.getReport())
                     .build();
         }
