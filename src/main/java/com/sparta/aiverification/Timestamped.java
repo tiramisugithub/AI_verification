@@ -23,7 +23,7 @@ public abstract class Timestamped {
   private LocalDateTime createdAt;
 
   @CreatedBy
-  @Column(updatable = false)
+  @Column
   private Long createdBy;
 
   @LastModifiedDate
@@ -46,4 +46,5 @@ public abstract class Timestamped {
     this.deletedAt = LocalDateTime.now();
     this.deletedBy = deletedByUserId;
   }
+
 }
