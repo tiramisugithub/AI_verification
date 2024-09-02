@@ -2,11 +2,9 @@ package com.sparta.aiverification.review.repository;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.aiverification.order.dto.OrderResponseDto;
 import com.sparta.aiverification.review.dto.ReviewResponseDto;
 import com.sparta.aiverification.review.entity.Review;
 import lombok.RequiredArgsConstructor;
@@ -57,21 +55,13 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
                 switch (order.getProperty()){
                     case "createdAt":
-                        return new OrderSpecifier<>(direction, orders.createdAt);
+                        return new OrderSpecifier<>(direction, review.createdAt);
                     case "updatedAt":
-                        return new OrderSpecifier<>(direction, orders.updatedAt);
+                        return new OrderSpecifier<>(direction, review.updatedAt);
                 }
             }
         }
         return null;
-    }
-
-    private BooleanExpression storeEq(UUID storeId) {
-        return storeId != null ? review.store.id.eq(storeId) : null;
-    }
-
-    private BooleanExpression userEq(Long userId) {
-        return userId != null ? review.user.id.eq(userId) : null;
     }
 
     @Override
@@ -83,5 +73,15 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                         review.isReported.eq(false))
                 .fetchOne();
     }
+
+    private BooleanExpression storeEq(UUID storeId) {
+        return storeId != null ? review.store.id.eq(storeId) : null;
+    }
+
+    private BooleanExpression userEq(Long userId) {
+        return userId != null ? review.user.id.eq(userId) : null;
+    }
+
+
 
 }

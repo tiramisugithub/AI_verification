@@ -51,7 +51,8 @@ public class OrderController {
     public RestApiResponse<Page<OrderResponseDto.Get>> getOrdersByUser(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
-        return RestApiResponse.success(orderService.getOrdersByUser(userDetails.getUser(), pageable))
+        return RestApiResponse.success(orderService.getOrdersByUser(userDetails.getUser(), pageable));
+    }
 
     // 해당 가게에 대한 전체 조회
     @GetMapping("/store/{storeId}")
