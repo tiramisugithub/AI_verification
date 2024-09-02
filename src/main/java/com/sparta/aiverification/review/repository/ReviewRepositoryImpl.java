@@ -40,7 +40,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 
         JPAQuery<Long> count = queryFactory.select(review.count())
                 .from(review)
-                .where(userEq(userId), storeEq(storeId), orders.isDeleted.eq(false));
+                .where(userEq(userId), storeEq(storeId), orders.isDeleted.eq(false), review.isReported.eq(false));
 
         return PageableExecutionUtils.getPage(result.stream()
                         .map(ReviewResponseDto.Get::of)
