@@ -5,6 +5,7 @@ import com.sparta.aiverification.menu.dto.MenuResponseDto;
 import com.sparta.aiverification.menu.service.MenuService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/menus")
 public class MenuController{
@@ -68,11 +70,11 @@ public class MenuController{
   }
 
   // 6. 메뉴-설명 인공지능 요청
-  @PostMapping("/generate-description/{menuId}")
+  @PostMapping("/generate/{menuId}")
   public ResponseEntity<String> generatMenuDescription(@PathVariable("menuId") UUID menuId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+    log.info(menuId.toString());
     // AI 설명 생성 및 DB 저장
-//    menuService.generatMenuDescription(menuId, userDetailsImpl.getUser());
-
+    menuService.generatMenuDescription(menuId, userDetailsImpl.getUser());
     // 응답 반환
     return ResponseEntity.ok("Description generated and saved successfully.");
   }

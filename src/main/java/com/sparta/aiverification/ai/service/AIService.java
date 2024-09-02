@@ -32,7 +32,7 @@ public class AIService {
   private static void isNotCustomer(User user) {
     // validation
     if (user.getRole() == UserRoleEnum.CUSTOMER) {
-      throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+      throw new IllegalArgumentException("UNAUTHORIZED ACCESS : CUSTOMER X");
     }
   }
 
@@ -41,8 +41,8 @@ public class AIService {
     if(user.getRole() == UserRoleEnum.OWNER){
       Store store = storeRepository.findByMenuId(menuId).get();
 
-      if(user.getId() !=  store.getUserId()){
-        throw new IllegalArgumentException("UNAUTHORIZED ACCESS");
+      if(!user.getId().equals(store.getUserId())){
+        throw new IllegalArgumentException("UNAUTHORIZED ACCESS : WRONG OWNER");
       }
     }
   }
@@ -79,7 +79,7 @@ public class AIService {
 
     // OWNER : 특정 가게 목록만 조회
     if(user.getRole() == UserRoleEnum.OWNER){
-      ai = aiRepository.findAIByMenuId(menuId, pageable);
+      ai = aiRepository.findAllByMenuId(menuId, pageable);
     }
     else{
       ai = aiRepository.findAll(pageable);
