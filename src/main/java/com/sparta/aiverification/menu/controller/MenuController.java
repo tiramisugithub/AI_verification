@@ -78,7 +78,7 @@ public class MenuController{
     return ResponseEntity.ok("Description generated and saved successfully.");
   }
 
-  @GetMapping("/")
+  @GetMapping("/search")
   public Page<Menu> searchMenus(
       @RequestParam(value = "q", required = false) String keyword,
       @RequestParam(value = "page", defaultValue = "1") int page,
