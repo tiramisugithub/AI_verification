@@ -2,7 +2,6 @@ package com.sparta.aiverification.user.service;
 
 import com.sparta.aiverification.common.CommonErrorCode;
 import com.sparta.aiverification.common.RestApiException;
-import com.sparta.aiverification.order.dto.OrderErrorCode;
 import com.sparta.aiverification.user.dto.SignupRequestDto;
 import com.sparta.aiverification.user.dto.UserInfoDto;
 import com.sparta.aiverification.user.dto.UserRequestDto;
@@ -11,12 +10,15 @@ import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
 import com.sparta.aiverification.user.jwt.JwtUtil;
 import com.sparta.aiverification.user.repository.UserRepository;
+import com.sparta.aiverification.user.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -75,12 +77,13 @@ public class UserService {
         throw new RestApiException(CommonErrorCode.INVALID_PARAMETER);
     }
 
+    @Transactional
     public UserResponseDto updateUser(Long userId, UserRequestDto userRequestDto) {
         String username = userRequestDto.getUsername();
         String email = userRequestDto.getEmail();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
 
         // 비밀번호가 있는 경우만 인코딩
         if (userRequestDto.getPassword() != null && !userRequestDto.getPassword().isBlank()) {
@@ -99,10 +102,7 @@ public class UserService {
 
         // 권한 변경 시 캐시 삭제
         if (userRequestDto.getRole() != null && !userRequestDto.getRole().equals(oldRole)) {
-            Cache cache = cacheManager.getCache("users");
-            if (cache != null) {
-                cache.evict(user.getUsername());
-            }
+            cacheClear(user.getUsername());
         }
 
         // 변경된 사용자 정보를 저장
@@ -112,17 +112,21 @@ public class UserService {
         return new UserResponseDto().of(updatedUser);
     }
 
-    public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId)
+
+    public UserResponseDto.UserDetailResponseDto deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+        User user = userRepository.findById(userDetailsImpl.getUser().getId())
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
 
-        userRepository.delete(user);
-        log.info("User with ID {} has been deleted", userId);
+        user.softDelete(userDetailsImpl.getUser().getId());
+        userRepository.save(user);  // 소프트 삭제된 상태로 저장
+        log.info("User with ID {} has been deleted", user.getId());
+        return UserResponseDto.UserDetailResponseDto.of(user);
     }
+
 
     public User findById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new RestApiException(OrderErrorCode.NOT_FOUND_ORDER));
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
     }
 
     // 사용자 존재 여부 검증
@@ -145,7 +149,11 @@ public class UserService {
         }
     }
 
-
-
-
+    // 캐시 삭제 메서드
+    private void cacheClear(String username) {
+        Cache cache = cacheManager.getCache("users");
+        if (cache != null) {
+            cache.evict(username);
+        }
+    }
 }

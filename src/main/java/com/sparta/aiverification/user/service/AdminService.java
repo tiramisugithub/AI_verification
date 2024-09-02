@@ -1,11 +1,15 @@
 package com.sparta.aiverification.user.service;
 
+import com.sparta.aiverification.common.CommonErrorCode;
+import com.sparta.aiverification.common.RestApiException;
 import com.sparta.aiverification.user.dto.SignupRequestDto;
 import com.sparta.aiverification.user.dto.UserResponseDto;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
 import com.sparta.aiverification.user.jwt.JwtUtil;
 import com.sparta.aiverification.user.repository.UserRepository;
+import com.sparta.aiverification.user.security.UserDetailsImpl;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -84,6 +89,19 @@ public class AdminService {
         // 페이지 번호와 페이지 크기, 정렬 기준을 기반으로 Pageable 객체를 생성
         Pageable pageable = PageRequest.of(page, size, sort);
         return userRepository.findAll(pageable).map(UserResponseDto::of);
+    }
+
+    public UserResponseDto.UserDetailResponseDto deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
+
+        // 사용자 소프트 삭제
+        user.softDelete(userDetailsImpl.getUser().getId());
+        userRepository.save(user);
+        //EntityManager.flush();
+
+        // UserDetailResponseDto로 변환하여 반환
+        return UserResponseDto.UserDetailResponseDto.of(user);
     }
 
 }
