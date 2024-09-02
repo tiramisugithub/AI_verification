@@ -44,7 +44,7 @@ public class StoreController {
   // 1.1 가게 목록 조회
   @GetMapping
   public Page<StoreResponseDto> getAllStores(
-      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
@@ -57,7 +57,7 @@ public class StoreController {
   @GetMapping("/categories/{categoryId}")
   public Page<StoreResponseDto> getAllStoresByCategoryId(
       @PathVariable("categoryId") Long categoryId,
-      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
@@ -69,7 +69,7 @@ public class StoreController {
   @GetMapping("/regions/{regionId}")
   public Page<StoreResponseDto> getAllStoresByRegionId(
       @PathVariable("regionId") Long regionId,
-      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
@@ -88,7 +88,7 @@ public class StoreController {
   @GetMapping("/{storeId}/menus")
   public Page<MenuResponseDto> getMenusByStore(
       @PathVariable("storeId") UUID storeId,
-      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
@@ -116,7 +116,7 @@ public class StoreController {
       @RequestParam(value = "region") Long regionId,
       @RequestParam(value = "category") Long categoryId,
       @RequestParam(value = "q", required = false) String keyword,
-      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc) {

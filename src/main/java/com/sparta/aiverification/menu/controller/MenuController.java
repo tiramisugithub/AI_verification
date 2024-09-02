@@ -39,7 +39,7 @@ public class MenuController{
   // 2. 메뉴 목록 조회
   @GetMapping
   public Page<MenuResponseDto> getAllMenus(
-      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc,
@@ -81,7 +81,7 @@ public class MenuController{
   @GetMapping("/")
   public Page<Menu> searchMenus(
       @RequestParam(value = "q", required = false) String keyword,
-      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc) {
