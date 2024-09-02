@@ -2,10 +2,7 @@ package com.sparta.aiverification.user.service;
 
 import com.sparta.aiverification.common.CommonErrorCode;
 import com.sparta.aiverification.common.RestApiException;
-import com.sparta.aiverification.user.dto.SignupRequestDto;
-import com.sparta.aiverification.user.dto.UserInfoDto;
-import com.sparta.aiverification.user.dto.UserRequestDto;
-import com.sparta.aiverification.user.dto.UserResponseDto;
+import com.sparta.aiverification.user.dto.*;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
 import com.sparta.aiverification.user.jwt.JwtUtil;
@@ -133,19 +130,19 @@ public class UserService {
     private void validateUser(String username, String email) {
         Optional<User> checkUsername = userRepository.findByUsername(username);
         if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+            throw new RestApiException(UserErrorCode.DUPLICATE_USERNAME);
         }
 
         Optional<User> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
-            throw new IllegalArgumentException("중복된 Email 입니다.");
+            throw new RestApiException(UserErrorCode.DUPLICATE_EMAIL);
         }
     }
 
     // 권한 확인
     private void validateRole(UserRoleEnum role) {
         if (UserRoleEnum.MASTER.equals(role) || UserRoleEnum.MANAGER.equals(role)) {
-            throw new IllegalArgumentException("관리자 및 매니저는 등록이 불가능합니다.");
+            throw new RestApiException(UserErrorCode.INVALID_ROLE);
         }
     }
 
