@@ -1,3 +1,3 @@
 # AI_verification
 
-check
+ch
