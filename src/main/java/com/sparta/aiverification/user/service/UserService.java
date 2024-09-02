@@ -31,6 +31,8 @@ public class UserService {
 
     private final JwtUtil jwtUtil;
 
+
+    @Transactional
     public void signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -54,6 +56,10 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
+
+        // 자동 생성된 ID로 createBy 필드 업데이트
+        user.setCreatedBy(user.getId());
+        userRepository.save(user);  // 다시 저장하여 createBy 필드를 업데이트
     }
 
     //회원 존재 여부 검증
