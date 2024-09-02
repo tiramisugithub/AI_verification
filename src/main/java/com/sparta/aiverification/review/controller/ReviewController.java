@@ -6,6 +6,10 @@ import com.sparta.aiverification.review.dto.ReviewResponseDto;
 import com.sparta.aiverification.review.service.ReviewService;
 import com.sparta.aiverification.user.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,15 +32,17 @@ public class ReviewController {
 
     // StoreId를 통한 조회
     @GetMapping("/{storeId}")
-    public RestApiResponse<List<ReviewResponseDto.Get>> getReviewByStoreId(
-            @PathVariable UUID storeId) {
-        return RestApiResponse.success(reviewService.getReviewByStoreId(storeId));
+    public RestApiResponse<Page<ReviewResponseDto.Get>> getReviewByStoreId(
+            @PathVariable UUID storeId,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        return RestApiResponse.success(reviewService.getReviewByStoreId(storeId, pageable));
     }
 
     @GetMapping
-    public RestApiResponse<List<ReviewResponseDto.Get>> getReview(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return RestApiResponse.success(reviewService.getReview(userDetails.getUser()));
+    public RestApiResponse<Page<ReviewResponseDto.Get>> getReview(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        return RestApiResponse.success(reviewService.getReview(userDetails.getUser(), pageable));
     }
 
     @PostMapping("/report")

@@ -13,6 +13,8 @@ import com.sparta.aiverification.store.entity.Store;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,19 +52,15 @@ public class ReviewService {
         ));
     }
 
-    public List<ReviewResponseDto.Get> getReviewByStoreId(UUID storeId) {
-        return reviewRepository.findAllByStoreId(storeId).stream()
-                .map(ReviewResponseDto.Get::of)
-                .toList();
+    public Page<ReviewResponseDto.Get> getReviewByStoreId(UUID storeId, Pageable pageable) {
+        return reviewRepository.findAllByCondition(null, storeId, pageable);
     }
 
-    public List<ReviewResponseDto.Get> getReview(User user) {
+    public Page<ReviewResponseDto.Get> getReview(User user, Pageable pageable) {
         if(user.getRole() == UserRoleEnum.CUSTOMER) {
             throw new RestApiException(ReviewErrorCode.UNAUTHORIZED_USER);
         }
-        return reviewRepository.findAll().stream()
-                .map(ReviewResponseDto.Get::of)
-                .toList();
+        return reviewRepository.findAllByCondition(null, null, pageable);
     }
 
     public ReviewResponseDto.CreateReport createReport(User user, ReviewRequestDto.CreateReport requestDto) {
