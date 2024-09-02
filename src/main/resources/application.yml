@@ -17,7 +17,8 @@ spring:
     database: postgresql
     hibernate:
       ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
 jwt:
-  secret-key: "Secret Key"
+  secret-key: "S6a8KbLCBk9F8o7ve+d93eTEReVU5JHmFO/7cPWO0X/UstRfCNlqYzudGyQluOPxZF+I+52XwiLmCNoWs7gPvA=="
   expiration: 3600 # JWT 토큰 만료 시간 (초 단위)
-
