@@ -3,6 +3,7 @@ package com.sparta.aiverification.user.service;
 import com.sparta.aiverification.common.CommonErrorCode;
 import com.sparta.aiverification.common.RestApiException;
 import com.sparta.aiverification.user.dto.SignupRequestDto;
+import com.sparta.aiverification.user.dto.UserErrorCode;
 import com.sparta.aiverification.user.dto.UserResponseDto;
 import com.sparta.aiverification.user.entity.User;
 import com.sparta.aiverification.user.enums.UserRoleEnum;
@@ -42,7 +43,7 @@ public class AdminService {
                         .allMatch("ROLE_MASTER"::equals);
 
         if(!hasRoleMaster){
-            throw new IllegalArgumentException("MASTER 권한이 있어야 MASTER 또는 MANAGER 계정을 생성할 수 있습니다.");
+            throw new RestApiException(UserErrorCode.UNAUTHORIZED_USER);
         }
 
         createAdminAccount(requestDto, role);
@@ -54,14 +55,12 @@ public class AdminService {
         String email = requestDto.getEmail();
 
         // 중복 확인
-        Optional<User> checkUsername = userRepository.findByUsername(username);
-        if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new RestApiException(UserErrorCode.DUPLICATE_USERNAME);
         }
 
-        Optional<User> checkEmail = userRepository.findByEmail(email);
-        if (checkEmail.isPresent()) {
-            throw new IllegalArgumentException("중복된 Email 입니다.");
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new RestApiException(UserErrorCode.DUPLICATE_EMAIL);
         }
 
         User user = User.builder()
@@ -98,7 +97,6 @@ public class AdminService {
         // 사용자 소프트 삭제
         user.softDelete(userDetailsImpl.getUser().getId());
         userRepository.save(user);
-        //EntityManager.flush();
 
         // UserDetailResponseDto로 변환하여 반환
         return UserResponseDto.UserDetailResponseDto.of(user);
