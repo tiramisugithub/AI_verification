@@ -42,7 +42,11 @@
 - **서비스 실행방법**
     
     ```bash
-    
+    1. application.yml 파일 내에 있는 secret-key 값을 수정한다.
+        1.1 추가적으로 menu/service/generatMenuDescription 함수 내에서 Gemini로부터 발급 받은 키를 입력한다.
+	2. application.yml 파일은 로컬 서버에 맞게 수정한다. 
+	3. Docker-Compose 디렉토리에서 docker-compose up -d 를 입력한다.
+	4. Spring Boot를 실행한다.
     ```
     
 - **프로젝트 구조**
