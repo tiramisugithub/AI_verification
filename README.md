@@ -98,7 +98,7 @@
 ---
 
 ### API Docs 및 ERD
-- **[API Docs]()**
+- **[API Docs](https://documenter.getpostman.com/view/37993476/2sAXjM5sA2)**
   
 - **ERD**
 > 모든 entity는 createdAt, createdBy, updatedAt, updatedBy, deletedAt, deletedBy가 존재한다.
