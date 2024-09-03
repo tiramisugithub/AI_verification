@@ -35,6 +35,10 @@
 
 ### 🍮 서비스 구성 및 실행방법
     
+
+- **서비스 구성(인프라 설계도)**
+![image](https://github.com/user-attachments/assets/00a2e564-30f9-49a8-a555-d94c5775a9a0)
+
 - **서비스 실행방법**
     
     ```bash
@@ -93,13 +97,11 @@
 
 ---
 
-### ERD 및 인프라 설계도
+### API Docs 및 ERD
+- **[API Docs]()**
+  
 - **ERD**
 > 모든 entity는 createdAt, createdBy, updatedAt, updatedBy, deletedAt, deletedBy가 존재한다.
-> 
+>
 ![image](https://github.com/user-attachments/assets/e5db72f8-dd29-4363-b5a4-784a7082b2a5)
 
-
-- **인프라 설계도**
-    
-![image](https://github.com/user-attachments/assets/00a2e564-30f9-49a8-a555-d94c5775a9a0)
