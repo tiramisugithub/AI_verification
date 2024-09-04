@@ -37,7 +37,7 @@
     
 
 - **서비스 구성(인프라 설계도)**
-![image](https://github.com/user-attachments/assets/00a2e564-30f9-49a8-a555-d94c5775a9a0)
+![image](https://github.com/user-attachments/assets/d37683a2-c8fa-4490-ad60-dd051bd7fc94)
 
 - **서비스 실행방법**
     
