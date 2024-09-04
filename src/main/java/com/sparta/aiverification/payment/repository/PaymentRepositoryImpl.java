@@ -5,8 +5,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.aiverification.order.dto.OrderResponseDto;
-import com.sparta.aiverification.order.entity.Orders;
 import com.sparta.aiverification.payment.dto.PaymentResponseDto;
 import com.sparta.aiverification.payment.entity.Payment;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
-import java.util.UUID;
 
-import static com.sparta.aiverification.order.entity.QOrders.orders;
 import static com.sparta.aiverification.payment.entity.QPayment.payment;
 
 @RequiredArgsConstructor
@@ -56,9 +52,9 @@ public class PaymentRepositoryImpl implements PaymentRepositoryCustom{
                 Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
                 switch (order.getProperty()){
                     case "createdAt":
-                        return new OrderSpecifier<>(direction, orders.createdAt);
+                        return new OrderSpecifier<>(direction, payment.createdAt);
                     case "updatedAt":
-                        return new OrderSpecifier<>(direction, orders.updatedAt);
+                        return new OrderSpecifier<>(direction, payment.updatedAt);
                 }
             }
         }

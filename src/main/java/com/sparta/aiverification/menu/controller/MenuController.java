@@ -86,7 +86,6 @@ public class MenuController{
       @RequestParam(value = "size", defaultValue = "10") int size,
       @RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
       @RequestParam(value = "isAsc", defaultValue = "false") boolean isAsc) {
-    return menuService.searchMenus(keyword, page, size, sortBy, isAsc);
+    return menuService.searchMenus(keyword, page - 1, size, sortBy, isAsc);
   }
-
 }
