@@ -187,6 +187,7 @@ public class MenuService {
   }
 
 
+  @Transactional
   public void generatMenuDescription(UUID menuId, User user) {
     String aiApiKey = "";
 
