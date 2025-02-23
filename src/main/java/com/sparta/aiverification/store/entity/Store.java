@@ -4,6 +4,7 @@ import com.sparta.aiverification.Timestamped;
 import com.sparta.aiverification.menu.entity.Menu;
 import com.sparta.aiverification.category.entity.Category;
 import com.sparta.aiverification.region.entity.Region;
+import com.sparta.aiverification.review.entity.Review;
 import com.sparta.aiverification.store.dto.StoreRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -19,11 +20,17 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Builder()
 @AllArgsConstructor
@@ -63,11 +70,14 @@ public class Store extends Timestamped {
   @Column(nullable = false)
   private Boolean status;
 
-
   // Cascade.PERSIST : 영속성 전이 : 영속 상태의 작업들이 연관된 엔티티들까지 전파
   @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<Menu> menus = new ArrayList<>();
+
+  @BatchSize(size = 10)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Review> reviews = new ArrayList<>();
 
 
   public void update(Region region, Category category, StoreRequestDto storeRequestDto) {

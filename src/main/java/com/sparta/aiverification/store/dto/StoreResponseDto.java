@@ -4,6 +4,7 @@ package com.sparta.aiverification.store.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import com.sparta.aiverification.store.entity.Store;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,6 @@ public class StoreResponseDto {
     private String address;
     private String description;
     private boolean status;
-
     public Default(Store store) {
       this.storeId = store.getId();
       this.categoryId = store.getCategory().getId();
@@ -39,6 +39,7 @@ public class StoreResponseDto {
   }
 
   @Data
+  @Builder
   public static class Get{
     private UUID storeId;
     private Long categoryId;

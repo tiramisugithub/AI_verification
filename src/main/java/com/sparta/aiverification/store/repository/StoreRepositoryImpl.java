@@ -12,6 +12,7 @@ import com.sparta.aiverification.store.dto.StoreResponseDto;
 import com.sparta.aiverification.store.entity.QStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -31,32 +32,33 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
   @Override
   public Page<StoreResponseDto.Get> searchStores(Long userId
-          , Long regionId, Long categoryId, String keyword
-          , Boolean status, Pageable pageable) {
+      , Long regionId, Long categoryId, String keyword
+      , Boolean status, Pageable pageable) {
     QStore store = QStore.store;
 
+    // Store와 Review를 JOIN하여 평균 별점 조회
     List<StoreResponseDto.Get> result = queryFactory
         .select(new QStoreResponseDto_Get(
-                store.id, store.category.id, store.region.id, store.name,
-                store.phone, store.address, store.description, store.status, ExpressionUtils.as(
-                JPAExpressions.select(review.score.avg())
-                        .from(review)
-                        .where(review.store.id.eq(store.id), review.isDeleted.eq(false)), "avgScore")))
-            .from(store)
-            .where(regionIdEq(regionId), userIdEq(userId), categoryIdEq(categoryId), statusEq(status),
-                    StringUtils.hasText(keyword) ? store.name.containsIgnoreCase(keyword)
-                            .or(store.description.containsIgnoreCase(keyword)) : null)
-            .orderBy(orderSort(pageable))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
+            store.id, store.category.id, store.region.id, store.name,
+            store.phone, store.address, store.description, store.status,
+            review.score.avg()))  // 별점 평균 추가
+        .from(store)
+        .leftJoin(review).on(review.store.id.eq(store.id).and(review.isDeleted.eq(false))) // JOIN으로 별점 가져오기
+        .where(regionIdEq(regionId), userIdEq(userId), categoryIdEq(categoryId), statusEq(status),
+            StringUtils.hasText(keyword) ? store.name.containsIgnoreCase(keyword)
+                .or(store.description.containsIgnoreCase(keyword)) : null)
+        .groupBy(store.id)  // GROUP BY 추가
+        .orderBy(store.id.asc()) // 인덱스를 활용한 정렬
+        .offset(pageable.getOffset())
+        .limit(pageable.getPageSize())
+        .fetch();
 
     JPAQuery<Long> total = queryFactory
         .select(store.count())
-            .from(store)
-            .where(regionIdEq(regionId), userIdEq(userId), categoryIdEq(categoryId), statusEq(status),
-                    StringUtils.hasText(keyword) ? store.name.contains(keyword)
-                            .or(store.description.contains(keyword)) : null);
+        .from(store)
+        .where(regionIdEq(regionId), userIdEq(userId), categoryIdEq(categoryId), statusEq(status),
+            StringUtils.hasText(keyword) ? store.name.contains(keyword)
+                .or(store.description.contains(keyword)) : null);
     return PageableExecutionUtils.getPage(result, pageable, total::fetchOne);
   }
 
